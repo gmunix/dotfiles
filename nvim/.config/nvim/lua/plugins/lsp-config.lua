@@ -50,6 +50,10 @@ return {
 		config = function()
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+			-- Disable the stylua LSP entry from nvim-lspconfig. We use the CLI formatter via conform,
+			-- and the packaged stylua binary here does not support the --lsp flag.
+			vim.lsp.enable("stylua", false)
+
 			local function on_attach(_, bufnr)
 				local map = function(mode, lhs, rhs, desc)
 					vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
