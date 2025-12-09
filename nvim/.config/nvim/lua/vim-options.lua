@@ -24,6 +24,9 @@ vim.keymap.set("n", "<S-l>", ":bnext<CR>", { desc = "Next buffer" })
 
 vim.keymap.set("n", "<leader>bd", ":bdelete<CR>", { desc = "Delete buffer" })
 
+-- Configure Keymaps for Noice
+vim.keymap.set("n", "<leader>nd", ":NoiceDismiss<CR>", { desc = "Dismiss notifications" })
+
 -- Configure Keymaps for Diagnostics
 vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 
