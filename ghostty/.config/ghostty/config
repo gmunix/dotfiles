@@ -1,0 +1,14 @@
+custom-shader = shaders/cursor_smear.glsl
+# custom-shader = shaders/cursor_smear_fade.glsl
+custom-shader = shaders/sparks.glsl
+custom-shader = shaders/shake.glsl
+
+theme = Everblush
+
+font-family = Cascadia Mono NF
+font-size = 15
+
+background-opacity = 0.9
+background-blur = true
+
+macos-titlebar-style = "hidden"
