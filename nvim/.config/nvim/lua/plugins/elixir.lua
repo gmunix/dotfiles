@@ -9,7 +9,12 @@ return {
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
 		local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/"
 
-		local function on_attach(_, bufnr)
+		local function on_attach(client, bufnr)
+			-- Rely on conform.nvim for formatting to avoid double formatters/diagnostics
+			if client and client.server_capabilities then
+				client.server_capabilities.documentFormattingProvider = false
+				client.server_capabilities.documentRangeFormattingProvider = false
+			end
 			local map = function(mode, lhs, rhs, desc)
 				vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
 			end
@@ -22,7 +27,8 @@ return {
 
 		elixir.setup({
 			nextls = {
-				enable = true,
+				-- Disable Next LS to avoid duplicate diagnostics with elixir-ls.
+				enable = false,
 				cmd = mason_bin .. "nextls",
 				on_attach = on_attach,
 				capabilities = capabilities,
