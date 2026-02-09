@@ -27,10 +27,10 @@ return {
 				"<leader>f",
 				group = "find",
 			},
-			{
-				"<leader>g",
-				group = "goto",
-			},
+				{
+					"<leader>g",
+					group = "git",
+				},
 			{
 				"<leader>r",
 				group = "rest",
