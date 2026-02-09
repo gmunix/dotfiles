@@ -52,7 +52,26 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
-			tabline = {},
+			tabline = {
+				lualine_a = {
+					{
+						"buffers",
+						mode = 2,
+						show_filename_only = true,
+						hide_filename_extension = false,
+						show_modified_status = true,
+						max_length = function()
+							return vim.o.columns
+						end,
+						symbols = {
+							modified = " ●",
+							alternate_file = "#",
+							directory = "",
+						},
+					},
+				},
+				lualine_z = { "tabs" },
+			},
 			winbar = {},
 			inactive_winbar = {},
 			extensions = {},
