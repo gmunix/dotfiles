@@ -5,7 +5,7 @@ return {
 	config = function()
 		require("ibl").setup({
 			exclude = {
-				filetypes = { "help", "alpha", "neo-tree", "Trouble", "lazy" },
+				filetypes = { "help", "alpha", "neo-tree", "oil", "Trouble", "lazy" },
 			},
 		})
 	end,

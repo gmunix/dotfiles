@@ -15,8 +15,5 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Initializations
-require("vim-options")
-require("lazy").setup("plugins")
-
-vim.notify = require("notify")
+-- Core initialization
+require("core")

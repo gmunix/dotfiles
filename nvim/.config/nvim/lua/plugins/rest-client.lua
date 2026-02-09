@@ -3,18 +3,19 @@ return {
 		"rest-nvim/rest.nvim",
 		ft = "http",
 		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
 			{
 				"nvim-treesitter/nvim-treesitter",
 				opts = function(_, opts)
 					opts.ensure_installed = opts.ensure_installed or {}
-					table.insert(opts.ensure_installed, "http")
+					if not vim.tbl_contains(opts.ensure_installed, "http") then
+						table.insert(opts.ensure_installed, "http")
+					end
 				end,
 			},
 		},
 		init = function()
 			vim.g.rest_nvim = {
-				skip_ssl_verification = true,
+				request = { skip_ssl_verification = true },
 				highlight = { enable = true, timeout = 750 },
 			}
 		end,
