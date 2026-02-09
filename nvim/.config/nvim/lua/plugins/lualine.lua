@@ -15,7 +15,7 @@ return {
 				},
 				ignore_focus = {},
 				always_divide_middle = true,
-				always_show_tabline = true,
+					always_show_tabline = false,
 				globalstatus = false,
 				refresh = {
 					statusline = 1000,
@@ -39,7 +39,23 @@ return {
 			sections = {
 				lualine_a = { "mode" },
 				lualine_b = { "branch", "diff", "diagnostics" },
-				lualine_c = { "filename" },
+					lualine_c = {
+						{
+							"buffers",
+							mode = 0,
+							show_filename_only = true,
+							hide_filename_extension = false,
+							show_modified_status = true,
+							max_length = function()
+								return math.floor(vim.o.columns * 0.45)
+							end,
+							symbols = {
+								modified = " ●",
+								alternate_file = "#",
+								directory = "",
+							},
+						},
+					},
 				lualine_x = { "encoding", "fileformat", "filetype" },
 				lualine_y = { "progress" },
 				lualine_z = { "location" },
@@ -52,26 +68,7 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
-			tabline = {
-				lualine_a = {
-					{
-						"buffers",
-						mode = 2,
-						show_filename_only = true,
-						hide_filename_extension = false,
-						show_modified_status = true,
-						max_length = function()
-							return vim.o.columns
-						end,
-						symbols = {
-							modified = " ●",
-							alternate_file = "#",
-							directory = "",
-						},
-					},
-				},
-				lualine_z = { "tabs" },
-			},
+				tabline = {},
 			winbar = {},
 			inactive_winbar = {},
 			extensions = {},
