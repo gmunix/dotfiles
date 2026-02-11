@@ -24,7 +24,6 @@ return {
 				"jsonls",
 				"lua_ls",
 				"marksman",
-				"nextls",
 				"pyright",
 				"tailwindcss",
 				"taplo",
@@ -103,8 +102,6 @@ return {
 				filetypes = {
 					"astro",
 					"css",
-					"eelixir",
-					"elixir",
 					"eruby",
 					"gohtml",
 					"heex",

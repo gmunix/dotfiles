@@ -10,7 +10,7 @@ return {
 
     require("noice").setup({
       lsp = {
-        hover = { silent = true },
+        hover = { silent = false },
       },
       presets = {
         bottom_search = true,
