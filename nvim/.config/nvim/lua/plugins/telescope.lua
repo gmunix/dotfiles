@@ -1,3 +1,5 @@
+local search_ignores = require("core.search_ignores")
+
 return {
 	{
 		"nvim-telescope/telescope.nvim",
@@ -17,6 +19,29 @@ return {
 					require("telescope.builtin").live_grep()
 				end,
 				desc = "Live grep",
+			},
+			{
+				"<leader>fF",
+				function()
+					require("telescope.builtin").find_files({
+						hidden = true,
+						no_ignore = true,
+						no_ignore_parent = true,
+						find_command = search_ignores.rg_find_files_command(),
+					})
+				end,
+				desc = "Find files (hidden + ignored)",
+			},
+			{
+				"<leader>fG",
+				function()
+					require("telescope.builtin").live_grep({
+						additional_args = function()
+							return search_ignores.rg_additional_args()
+						end,
+					})
+				end,
+				desc = "Live grep (hidden + ignored)",
 			},
 			{
 				"<leader>fb",
