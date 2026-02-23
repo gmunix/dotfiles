@@ -3,6 +3,7 @@ return {
 	event = { "BufWritePre", "BufNewFile" },
 	opts = {
 		notify_on_error = false,
+		notify_no_formatters = true,
 		format_on_save = function(_)
 			return { timeout_ms = 2000, lsp_fallback = true }
 		end,
@@ -13,10 +14,10 @@ return {
 			typescript = { "prettierd", "prettier" },
 			javascriptreact = { "prettierd", "prettier" },
 			typescriptreact = { "prettierd", "prettier" },
-			elixir = { "mix_format" },
-			heex = { "mix_format" },
-			surface = { "mix_format" },
-			eelixir = { "mix_format" },
+			elixir = { "mix" },
+			heex = { "mix" },
+			surface = { "mix" },
+			eelixir = { "mix" },
 			json = { "prettierd", "prettier" },
 			yaml = { "prettierd", "prettier" },
 			markdown = { "prettierd", "prettier" },
