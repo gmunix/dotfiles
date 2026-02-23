@@ -1,8 +1,8 @@
 return {
 	"goolord/alpha-nvim",
+	event = "VimEnter",
 	dependencies = {
 		"nvim-tree/nvim-web-devicons",
-		"MunifTanjim/nui.nvim",
 		"MaximilianLloyd/ascii.nvim",
 	},
 
@@ -11,14 +11,15 @@ return {
 		local dashboard = require("alpha.themes.dashboard")
 		local ascii = require("ascii")
 
-		dashboard.section.header.val = ascii.get_random("text", "doom")
+		-- dashboard.section.header.val = ascii.get_random("text", "doom")
+		dashboard.section.header.val = ascii.art.gaming.doom.logo
 
 		dashboard.section.buttons.val = {
 			dashboard.button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
-			dashboard.button("f", "  > Find file", ":cd $HOME/Workspace | Telescope find_files<CR>"),
+			dashboard.button("f", "  > Find file", "<cmd>Telescope find_files<CR>"),
 			dashboard.button("r", "  > Recent", ":Telescope oldfiles<CR>"),
-			dashboard.button("s", "  > Settings", ":e $MYVIMRC | :cd %:p:h | split . | wincmd k | pwd<CR>"),
-			dashboard.button("q", "x  > Quit NVIM", ":qa<CR>"),
+			dashboard.button("s", "  > Settings", "<cmd>edit $MYVIMRC<CR>"),
+			dashboard.button("q", "  > Quit Neovim", ":qa<CR>"),
 		}
 
 		dashboard.section.footer = {
@@ -42,8 +43,11 @@ return {
 		}
 
 		alpha.setup(dashboard.opts)
-		vim.cmd([[
-      autocmd FileType alpha setlocal nofoldenable
-    ]])
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "alpha",
+			callback = function()
+				vim.opt_local.foldenable = false
+			end,
+		})
 	end,
 }

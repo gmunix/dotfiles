@@ -1,5 +1,6 @@
 return {
 	"nvim-lualine/lualine.nvim",
+	event = "VeryLazy",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		require("lualine").setup({
@@ -14,7 +15,7 @@ return {
 				},
 				ignore_focus = {},
 				always_divide_middle = true,
-				always_show_tabline = true,
+					always_show_tabline = false,
 				globalstatus = false,
 				refresh = {
 					statusline = 1000,
@@ -36,9 +37,26 @@ return {
 				},
 			},
 			sections = {
-				lualine_a = { "mode" },
-				lualine_b = { "branch", "diff", "diagnostics" },
-				lualine_c = { "filename" },
+				lualine_a = {
+					{
+						"buffers",
+						mode = 0,
+						show_filename_only = true,
+						hide_filename_extension = false,
+						show_modified_status = true,
+						use_mode_colors = true,
+						max_length = function()
+							return math.floor(vim.o.columns * 2 / 3)
+						end,
+						symbols = {
+							modified = " ●",
+							alternate_file = "",
+							directory = "",
+						},
+					},
+				},
+				lualine_b = { "mode", "branch", "diff", "diagnostics" },
+				lualine_c = {},
 				lualine_x = { "encoding", "fileformat", "filetype" },
 				lualine_y = { "progress" },
 				lualine_z = { "location" },
@@ -51,7 +69,7 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
-			tabline = {},
+				tabline = {},
 			winbar = {},
 			inactive_winbar = {},
 			extensions = {},

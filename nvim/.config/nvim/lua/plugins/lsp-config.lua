@@ -1,6 +1,6 @@
 return {
 	{
-		"williamboman/mason.nvim",
+		"mason-org/mason.nvim",
 		lazy = false,
 		config = function()
 			require("mason").setup()
@@ -8,8 +8,9 @@ return {
 	},
 
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason-lspconfig.nvim",
 		lazy = false,
+		dependencies = { "mason-org/mason.nvim" },
 		opts = {
 			ensure_installed = {
 				"bashls",
@@ -23,20 +24,21 @@ return {
 				"jsonls",
 				"lua_ls",
 				"marksman",
-				"nextls",
 				"pyright",
 				"tailwindcss",
 				"taplo",
 				"vtsls",
 				"yamlls",
 			},
-			automatic_installation = true,
+			-- We manually configure and enable servers below with vim.lsp.config/enable.
+			automatic_enable = false,
 		},
 	},
 
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		lazy = false,
+		dependencies = { "mason-org/mason.nvim" },
 		opts = {
 			ensure_installed = { "prettier", "prettierd", "stylua", "black", "isort", "eslint_d" },
 			run_on_start = true,
@@ -47,6 +49,7 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		lazy = false,
+		dependencies = { "hrsh7th/cmp-nvim-lsp" },
 		config = function()
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -64,8 +67,6 @@ return {
 				map("n", "<leader>ca", vim.lsp.buf.code_action, "Code action")
 				map("n", "<leader>rn", vim.lsp.buf.rename, "Rename")
 			end
-
-			vim.diagnostic.config({ virtual_text = false, severity_sort = true })
 
 			local function setup(name, opts)
 				local config = vim.tbl_deep_extend("force", {
@@ -101,8 +102,6 @@ return {
 				filetypes = {
 					"astro",
 					"css",
-					"eelixir",
-					"elixir",
 					"eruby",
 					"gohtml",
 					"heex",

@@ -9,6 +9,10 @@ return {
 		wk.setup(opts)
 		wk.add({
 			{
+				"<leader>a",
+				group = "harpoon",
+			},
+			{
 				"<leader>?",
 				function()
 					wk.show({ global = false })
@@ -24,20 +28,28 @@ return {
 				group = "code",
 			},
 			{
+				"<leader>d",
+				group = "database",
+			},
+			{
 				"<leader>f",
 				group = "find",
 			},
 			{
 				"<leader>g",
-				group = "goto",
+				group = "git",
 			},
 			{
 				"<leader>r",
-				group = "rest",
+				group = "rest/rename",
 			},
 			{
 				"<leader>n",
 				group = "noice",
+			},
+			{
+				"<leader>e",
+				desc = "Explorer",
 			},
 		})
 	end,
