@@ -1,5 +1,6 @@
 # Dynamic theme colors
-config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
+theme = Monokai Pro Ristretto
+cursor-text = #000000
 
 # Font
 font-family = Cascadia Mono NF
