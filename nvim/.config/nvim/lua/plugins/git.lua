@@ -6,7 +6,7 @@ return {
 			{
 				"<leader>gg",
 				function()
-					require("neogit").open({ kind = "floating" })
+					require("neogit").open()
 				end,
 				desc = "Neogit",
 			},
@@ -14,9 +14,10 @@ return {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-telescope/telescope.nvim",
+			"esmuellert/codediff.nvim",
 		},
 		opts = {
-			kind = "floating",
+			kind = "tab",
 		},
 	},
 	{
