@@ -44,6 +44,10 @@ return {
 				group = "rest/rename",
 			},
 			{
+				"<leader>t",
+				group = "tabs",
+			},
+			{
 				"<leader>n",
 				group = "noice",
 			},

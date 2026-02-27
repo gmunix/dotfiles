@@ -15,7 +15,7 @@ return {
 				},
 				ignore_focus = {},
 				always_divide_middle = true,
-					always_show_tabline = false,
+				always_show_tabline = false,
 				globalstatus = false,
 				refresh = {
 					statusline = 1000,
@@ -69,7 +69,21 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
-				tabline = {},
+			tabline = {
+				lualine_a = {
+					{
+						"tabs",
+						mode = 2,
+						path = 0,
+						use_mode_colors = true,
+						show_modified_status = true,
+						tab_max_length = 28,
+						max_length = function()
+							return math.floor(vim.o.columns * 0.95)
+						end,
+					},
+				},
+			},
 			winbar = {},
 			inactive_winbar = {},
 			extensions = {},
