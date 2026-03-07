@@ -67,6 +67,17 @@ button {
     padding: 0px 0px;
     border-radius: 0px;
     color: @bg;
+    transition-property: background-color, color;
+    transition-duration: 180ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#workspaces button label {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    transition-property: margin-top, margin-bottom;
+    transition-duration: 180ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 #workspaces button:first-child {
@@ -85,6 +96,19 @@ button {
     background-color: @bg;
     color: @fg;
     border-radius: 0px;
+}
+
+#workspaces button.active label {
+    margin-top: -2px;
+    margin-bottom: 2px;
+}
+
+#workspaces button:first-child.active {
+    border-radius: 6px 6px 0 0;
+}
+
+#workspaces button:last-child.active {
+    border-radius: 0 0 6px 6px;
 }
 
 #workspaces button.focused {
