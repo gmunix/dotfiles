@@ -1,6 +1,6 @@
 {
   "position": "left",
-  "width": 32,
+  "width": 44,
   "spacing": 6,
   "modules-left": ["clock", "hyprland/workspaces"],
   "modules-center": ["cava"],
