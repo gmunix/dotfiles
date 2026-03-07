@@ -4,7 +4,7 @@
   "spacing": 6,
   "modules-left": ["clock", "hyprland/workspaces"],
   "modules-center": ["cava"],
-  "modules-right": ["idle_inhibitor", "tray", "bluetooth", "wireplumber", "temperature", "cpu", "memory"],
+  "modules-right": ["bluetooth", "wireplumber", "temperature", "cpu", "memory", "idle_inhibitor", "tray"],
   "hyprland/workspaces": {
     "all-outputs": true,
     "warp-on-scroll": false,
@@ -32,7 +32,7 @@
   },
   "cava": {
     "rotate": 270,
-    "framerate": 30,
+    "framerate": 20,
     "autosens": 1,
     "bars": 24,
     "lower_cutoff_freq": 50,
@@ -87,10 +87,10 @@
   },
   "wireplumber": {
     "scroll-step": 5,
-    "format": "{icon} {volume}%",
+    "format": "V {volume}%",
     "format-bluetooth": "{icon} {volume}% ",
-    "format-bluetooth-muted": " {icon}",
-    "format-muted": "",
+    "format-bluetooth-muted": "󰝟 {icon}",
+    "format-muted": "MUTE",
     "format-icons": {
       "headphone": "",
       "hands-free": "",
@@ -104,19 +104,18 @@
   },
   "cpu": {
     "interval": 10,
-    "format": " {max_frequency}",
+    "format": "C {usage}%",
     "max-length": 10
   },
   "memory": {
-    "interval": 30,
-    "format": " {}%",
+    "interval": 10,
+    "format": "M {}%",
     "max-length": 10
   },
   "temperature": {
-    // "thermal-zone": 2,
-    // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-    // "critical-threshold": 80,
-    // "format-critical": "{temperatureC}°C ",
-    "format": "{temperatureC}°C "
+    "hwmon-path": "/sys/class/hwmon/hwmon0/temp1_input",
+    "critical-threshold": 80,
+    "format-critical": "{temperatureC}C!",
+    "format": "T {temperatureC}C"
   }
 }
