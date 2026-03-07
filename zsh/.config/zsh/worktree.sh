@@ -1,9 +1,3 @@
-if [ -x /opt/homebrew/bin/brew ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ -x /usr/local/bin/brew ]; then
-  eval "$(/usr/local/bin/brew shellenv)"
-fi
-
 GIT_BIN="$(command -v git 2>/dev/null || echo /usr/bin/git)"
 CP_BIN="$(command -v cp 2>/dev/null || echo /bin/cp)"
 
