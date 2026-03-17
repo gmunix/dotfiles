@@ -1,0 +1,105 @@
+# This is a demo config to showcase some of the most important commands.
+# It is meant to be changed and configured, as it is intentionally kept sparse.
+# For a (much) more advanced configuration example see my dotfiles:
+# https://github.com/FelixKratz/dotfiles
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+AEROSPACE_BIN="/opt/homebrew/bin/aerospace"
+
+##### Bar Appearance #####
+# Configuring the general appearance of the bar.
+# These are only some of the options available. For all options see:
+# https://felixkratz.github.io/SketchyBar/config/bar
+# If you are looking for other colors, see the color picker:
+# https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
+
+sketchybar --bar position=top height=32 blur_radius=30 color=0x00000000
+
+##### Changing Defaults #####
+# We now change some default values, which are applied to all further items.
+# For a full list of all available item properties see:
+# https://felixkratz.github.io/SketchyBar/config/items
+
+default=(
+  padding_left=5
+  padding_right=5
+  icon.font="Hack Nerd Font:Bold:17.0"
+  label.font="Hack Nerd Font:Bold:14.0"
+  icon.color=0xffffb86b
+  label.color=0xffffb86b
+  icon.padding_left=4
+  icon.padding_right=4
+  label.padding_left=4
+  label.padding_right=4
+)
+sketchybar --default "${default[@]}"
+
+##### Adding AeroSpace Workspace Indicators #####
+sketchybar --add event aerospace_workspace_change
+
+for sid in 1 2 3 4 5 6 7 8 9
+do
+  space=(
+    icon.drawing=off
+    label="$sid"
+    label.padding_left=8
+    label.padding_right=8
+    background.color=0x00000000
+    background.corner_radius=5
+    background.height=25
+    background.drawing=off
+    script="$PLUGIN_DIR/space.sh"
+    click_script="$AEROSPACE_BIN workspace $sid"
+  )
+  sketchybar --add item space."$sid" left \
+             --set space."$sid" "${space[@]}" \
+             --subscribe space."$sid" aerospace_workspace_change
+done
+
+focused_workspace="$("$AEROSPACE_BIN" list-workspaces --focused 2>/dev/null)"
+if [ -n "$focused_workspace" ]; then
+  sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$focused_workspace"
+fi
+
+##### Adding Left Items #####
+# We add some regular items to the left side of the bar, where
+# only the properties deviating from the current defaults need to be set
+
+sketchybar --add item chevron left \
+           --set chevron icon= label.drawing=off \
+           --add item front_app left \
+           --set front_app icon.drawing=off script="$PLUGIN_DIR/front_app.sh" \
+           --subscribe front_app front_app_switched
+
+##### Adding Right Items #####
+# In the same way as the left items we can add items to the right side.
+# Additional position (e.g. center) are available, see:
+# https://felixkratz.github.io/SketchyBar/config/items#adding-items-to-sketchybar
+
+# Some items refresh on a fixed cycle, e.g. the clock runs its script once
+# every 10s. Other items respond to events they subscribe to, e.g. the
+# volume.sh script is only executed once an actual change in system audio
+# volume is registered. More info about the event system can be found here:
+# https://felixkratz.github.io/SketchyBar/config/events
+
+sketchybar --add item clock right \
+           --set clock update_freq=10 icon=  script="$PLUGIN_DIR/clock.sh" \
+           --add item volume right \
+           --set volume script="$PLUGIN_DIR/volume.sh" \
+           --subscribe volume volume_change \
+           --add item battery right \
+           --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
+           --subscribe battery system_woke power_source_change \
+           --add item media right \
+           --set media update_freq=5 \
+                      icon=󰎈 \
+                      script="$PLUGIN_DIR/media.sh" \
+                      label.max_chars=28 \
+                      drawing=on \
+                      label="No media" \
+                      icon.padding_left=8 \
+                      padding_left=6 \
+           --subscribe media mouse.clicked system_woke
+
+##### Force all scripts to run the first time (never do this in a script) #####
+sketchybar --update

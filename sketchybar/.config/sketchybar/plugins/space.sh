@@ -1,0 +1,15 @@
+#!/bin/sh
+
+AEROSPACE_BIN="/opt/homebrew/bin/aerospace"
+workspace="${NAME#space.}"
+focused_workspace="$FOCUSED_WORKSPACE"
+
+if [ -z "$focused_workspace" ]; then
+  focused_workspace="$("$AEROSPACE_BIN" list-workspaces --focused 2>/dev/null)"
+fi
+
+if [ "$workspace" = "$focused_workspace" ]; then
+  sketchybar --set "$NAME" background.drawing=on background.color=0x35ffb86b label.color=0xffffd2a1
+else
+  sketchybar --set "$NAME" background.drawing=off label.color=0xffffb86b
+fi
