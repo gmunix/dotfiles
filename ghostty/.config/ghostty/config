@@ -11,7 +11,7 @@ font-size = 15
 
 font-family = "CaskaydiaMono Nerd Font"
 font-style = Regular
-font-size = 9
+font-size = 15
 
 # Window
 macos-titlebar-style = "hidden"
