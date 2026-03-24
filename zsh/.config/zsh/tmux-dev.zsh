@@ -2,7 +2,7 @@ tmux-dev() {
   local name="$1"
   local dev_dir="$2"
 
-  if [[ -z "$name" || -z "$dev_dir" ]]; then
+  if [ -z "$name" ]; then
     echo "Usage: tmux-dev <session-name> [path]" >&2
     return 1
   fi
