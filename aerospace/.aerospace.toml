@@ -73,7 +73,7 @@ on-mode-changed = []
     inner.vertical =   4
     outer.left =       2
     outer.bottom =     2
-    outer.top =        [{ monitor.main = 2 }, { monitor.secondary = 32 }, 2]
+    outer.top =        [{ monitor.secondary = 2 }, { monitor.main = 32 }, 2]
     outer.right =      2
 
 # 'main' binding mode declaration
@@ -164,15 +164,15 @@ on-mode-changed = []
 # ============= Multi monitor setup =============
 [workspace-to-monitor-force-assignment]
 
-1 = ['secondary', 'main']
-2 = ['secondary', 'main']
-3 = ['secondary', 'main']
-4 = ['secondary', 'main']
-5 = ['secondary', 'main']
-6 = 'main'
-7 = 'main'
-8 = 'main'
-9 = 'main'
+1 = 'main'
+2 = 'main'
+3 = 'main'
+4 = 'main'
+5 = 'main'
+6 = 'secondary'
+7 = 'secondary'
+8 = 'secondary'
+9 = 'secondary'
 
 # ==============================================
 
