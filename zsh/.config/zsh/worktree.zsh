@@ -74,6 +74,7 @@ worktree-build-shell-layout() {
 
   editor_pane="$(tmux display-message -p -t "${session_name}:editor.0" '#{pane_id}')"
   tmux split-window -t "$editor_pane" -h -p 20 -c "$worktree_path" "opencode --port"
+  tmux resize-pane -t "$editor_pane" -Z
   tmux select-pane -t "$editor_pane"
 
   # SHELL
