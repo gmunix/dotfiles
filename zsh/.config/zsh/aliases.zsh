@@ -1,7 +1,7 @@
 alias ll="ls -la"
 
 alias tn="tmux new -s"
-alias ta="tmux a"
+alias ta="tmux-attach"
 alias ts="tmux ls"
 
 alias td="tmux-dev"
