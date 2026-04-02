@@ -73,7 +73,7 @@ worktree-build-shell-layout() {
   tmux new-session -d -s "$session_name" -n code -c "$worktree_path" "nvim"
 
   editor_pane="$(tmux display-message -p -t "${session_name}:editor.0" '#{pane_id}')"
-  tmux split-window -t "$editor_pane" -h -p 20 -c "$worktree_path" "opencode"
+  tmux split-window -t "$editor_pane" -h -p 20 -c "$worktree_path" "opencode --port"
   tmux select-pane -t "$editor_pane"
 
   # SHELL

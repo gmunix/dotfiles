@@ -7,7 +7,7 @@ zettelkasten(){
 
     local editor_pane="$(tmux display-message -p -t "${name}:notes.0" '#{pane_id}')"
 
-    tmux split-window -t "$editor_pane" -p 20 -h -c "$notes_dir" "opencode"
+    tmux split-window -t "$editor_pane" -p 20 -h -c "$notes_dir" "opencode --port"
     tmux select-pane -t "$editor_pane"
   fi
 
