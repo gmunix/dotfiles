@@ -10,6 +10,7 @@ alias wn="worktree-new"
 alias wo="worktree-open"
 alias wd="worktree-delete"
 alias dotf="tmux-dev dotfiles $HOME/dotfiles"
+alias zet="zettelkasten"
 
 alias gl="git log"
 alias gs="git status"
