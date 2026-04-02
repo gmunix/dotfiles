@@ -9,8 +9,8 @@ worktree-list() {
 
 worktree-sync-backend-config() {
   local worktree_path="$1"
-  local source_dir="$HOME/Work/env/backend"
-  local target_dir="$worktree_path/meetrox-backend/config"
+  local source_dir="$HOME/Work/env/chat-relay"
+  local target_dir="$worktree_path/chat-relay/config"
   local -a source_files
 
   [ -d "$source_dir" ] || return 0
@@ -52,6 +52,9 @@ worktree-build-shell-layout() {
   local session_name="$1"
   local worktree_path="$2"
   local shell_window_target="${session_name}:shell"
+  local editor_window_target="${session_name}:editor"
+  local git_window_target="${session_name}:git"
+  local env_path="$HOME/Work/env"
   local bottom_pane_percent=5
   local top_grid_lower_row_percent=80
   local backend_dir
@@ -66,18 +69,33 @@ worktree-build-shell-layout() {
   relay_dir="$(worktree-pane-dir "$worktree_path" "chat-relay")"
   connector_dir="$(worktree-pane-dir "$worktree_path" "whatsapp-connector")"
 
+  # EDITOR
+  tmux new-session -d -s "$session_name" -n code -c "$worktree_path" "nvim"
+
+  editor_pane="$(tmux display-message -p -t "${session_name}:editor.0" '#{pane_id}')"
+  tmux split-window -t "$editor_pane" -h -p 20 -c "$worktree_path" "opencode"
+  tmux select-pane -t "$editor_pane"
+
+  # SHELL
   tmux new-window -t "$session_name" -n shell -c "$backend_dir"
 
-  # Start from the initial pane and split once to reserve a full-width bottom pane.
   top_left_pane="$(tmux display-message -p -t "${shell_window_target}.0" '#{pane_id}')"
-  tmux split-window -t "$top_left_pane" -v -p "$bottom_pane_percent" -c "$worktree_path" >/dev/null
+  tmux split-window -t "$top_left_pane" -v -p "$bottom_pane_percent" -c "$env_path" >/dev/null
 
-  # Turn the top area into a 2x2 grid.
   top_right_pane="$(tmux split-window -t "$top_left_pane" -h -p 50 -c "$vue_dir" -P -F '#{pane_id}')"
   tmux split-window -t "$top_left_pane"  -v -p "$top_grid_lower_row_percent" -c "$relay_dir" >/dev/null
   tmux split-window -t "$top_right_pane" -v -p "$top_grid_lower_row_percent" -c "$connector_dir" >/dev/null
 
   tmux select-pane -t "$top_left_pane"
+
+  # GIT
+  tmux new-window -t "$session_name" -n git -c "$worktree_path" "lazygit"
+
+  lazygit_pane="$(tmux display-message -p -t "${git_window_target}.0" '#{pane_id}')"
+  tmux split-window -t "$lazygit_pane" -v -c "$worktree_path"
+
+  # Select main window
+  tmux select-window -t "${session_name}:code"
 }
 
 worktree-open() {
@@ -88,10 +106,7 @@ worktree-open() {
   session_name="$(basename "$worktree_path" | tr '/.:' '___')"
 
   if ! tmux has-session -t "$session_name" 2>/dev/null; then
-    tmux new-session -d -s "$session_name" -n nvim -c "$worktree_path" "nvim"
     worktree-build-shell-layout "$session_name" "$worktree_path"
-    tmux new-window -t "$session_name" -n git -c "$worktree_path" "lazygit"
-    tmux select-window -t "${session_name}:nvim"
   fi
 
   if [ -n "$TMUX" ]; then
