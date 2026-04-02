@@ -50,6 +50,20 @@ return {
 					{ name = "buffer" },
 				}),
 			})
+
+			cmp.setup.filetype({ "markdown" }, {
+				sources = cmp.config.sources({
+					{ name = "obsidian" },
+					{ name = "obsidian_new" },
+					{ name = "obsidian_tags" },
+					{ name = "codeium" },
+					{ name = "nvim_lsp" },
+					{ name = "luasnip" },
+					{ name = "path" },
+				}, {
+					{ name = "buffer" },
+				}),
+			})
 		end,
 	},
 }

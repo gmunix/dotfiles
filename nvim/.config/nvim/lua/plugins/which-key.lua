@@ -52,6 +52,10 @@ return {
 				group = "noice",
 			},
 			{
+				"<leader>z",
+				group = "zettelkasten",
+			},
+			{
 				"<leader>e",
 				desc = "Explorer",
 			},
