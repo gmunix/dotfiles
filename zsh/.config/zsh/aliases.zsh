@@ -5,10 +5,6 @@ alias ta="tmux-attach"
 alias ts="tmux ls"
 
 alias td="tmux-dev"
-alias wl="worktree-list"
-alias wn="worktree-new"
-alias wo="worktree-open"
-alias wd="worktree-delete"
 alias dotf="tmux-dev dotfiles $HOME/dotfiles"
 alias zet="zettelkasten"
 
