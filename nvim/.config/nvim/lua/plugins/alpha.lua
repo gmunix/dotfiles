@@ -12,7 +12,8 @@ return {
 		local ascii = require("ascii")
 
 		-- dashboard.section.header.val = ascii.get_random("text", "doom")
-		dashboard.section.header.val = ascii.art.gaming.doom.logo
+		-- dashboard.section.header.val = ascii.art.gaming.doom.logo
+		dashboard.section.header.val = ascii.art.text.neovim.sharp
 
 		dashboard.section.buttons.val = {
 			dashboard.button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
@@ -36,8 +37,9 @@ return {
 		}
 
 		dashboard.opts.layout = {
-			{ type = "padding", val = 6 },
+			{ type = "padding", val = 10 },
 			dashboard.section.header,
+			{ type = "padding", val = 6 },
 			dashboard.section.buttons,
 			dashboard.section.footer,
 		}
