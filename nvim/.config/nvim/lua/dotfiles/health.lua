@@ -74,9 +74,16 @@ function M.check()
 		report("warn", "C compiler or make missing. Treesitter parser auto-install is disabled.")
 	end
 
+	if tooling.has_tree_sitter_cli() then
+		report("ok", "tree-sitter CLI available")
+	else
+		report("warn", "tree-sitter CLI missing. Treesitter-backed plugins are disabled until it is installed.")
+	end
+
 	start("Neovim config")
 	report("info", "Mason LSP installs: " .. table.concat(tooling.mason_lsp_servers(), ", "))
 	report("info", "Mason tool installs: " .. table.concat(tooling.mason_tools(), ", "))
+	report("info", "After installing tree-sitter CLI, run :TSUpdate once to refresh stale parsers.")
 	report("info", "Run scripts/nvim-deps.sh --install to install common OS dependencies.")
 end
 

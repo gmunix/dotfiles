@@ -7,6 +7,9 @@ local defaults = {
 	neogit = false,
 	windsurf = false,
 	undo_glow = false,
+	milli = false,
+	milli_splash = "fire",
+	milli_loop = true,
 }
 
 local function normalize_env_name(name)
@@ -52,6 +55,15 @@ end
 
 function M.all()
 	return vim.deepcopy(M.optional)
+end
+
+function M.get(name, fallback)
+	local value = M.optional[name]
+	if value == nil then
+		return fallback
+	end
+
+	return value
 end
 
 return M

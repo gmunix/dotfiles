@@ -59,6 +59,7 @@ need_any "make" make gmake
 recommend "node" node
 recommend "npm" npm
 recommend "python3" python3
+recommend "tree-sitter CLI" tree-sitter
 
 if ((${#missing[@]} == 0)); then
   echo "Required Neovim OS dependencies are installed."
@@ -76,17 +77,17 @@ if [[ "$install" != true ]]; then
 fi
 
 if has brew; then
-  brew install git curl unzip gnu-tar gzip ripgrep node python@3
+  brew install git curl unzip gnu-tar gzip ripgrep node python@3 tree-sitter
   if ! has_any cc gcc clang; then
     xcode-select --install || true
   fi
 elif has apt-get; then
   sudo apt-get update
-  sudo apt-get install -y git curl unzip tar gzip ripgrep nodejs npm python3 python3-venv build-essential
+  sudo apt-get install -y git curl unzip tar gzip ripgrep nodejs npm python3 python3-venv build-essential tree-sitter-cli
 elif has pacman; then
-  sudo pacman -S --needed git curl wget unzip tar gzip ripgrep nodejs npm python base-devel
+  sudo pacman -S --needed git curl wget unzip tar gzip ripgrep nodejs npm python base-devel tree-sitter-cli
 elif has dnf; then
-  sudo dnf install -y git curl wget unzip tar gzip ripgrep nodejs npm python3 python3-devel gcc gcc-c++ make
+  sudo dnf install -y git curl wget unzip tar gzip ripgrep nodejs npm python3 python3-devel gcc gcc-c++ make tree-sitter-cli
 else
   echo "Unsupported package manager. Install the missing dependencies listed above."
   exit 1

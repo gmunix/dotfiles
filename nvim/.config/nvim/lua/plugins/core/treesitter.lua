@@ -2,18 +2,27 @@ local tooling = require("core.tooling")
 
 return {
 	"nvim-treesitter/nvim-treesitter",
+	branch = "main",
+	lazy = false,
 	build = function()
-		if tooling.has_compiler() then
+		if tooling.can_install_treesitter_parsers() then
 			vim.cmd.TSUpdate()
 		end
 	end,
 	config = function()
-		local config = require("nvim-treesitter.configs")
-		config.setup({
-			ensure_installed = tooling.treesitter_ensure_installed(),
-			auto_install = tooling.has_compiler(),
-			highlight = { enable = true },
-			indent = { enable = true },
+		require("nvim-treesitter").setup()
+
+		if not tooling.can_install_treesitter_parsers() then
+			return
+		end
+
+		require("nvim-treesitter").install(tooling.treesitter_parsers)
+
+		vim.api.nvim_create_autocmd("FileType", {
+			group = vim.api.nvim_create_augroup("treesitter_start", { clear = true }),
+			callback = function(event)
+				pcall(vim.treesitter.start, event.buf)
+			end,
 		})
 	end,
 }

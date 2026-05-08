@@ -5,4 +5,7 @@ return {
 	neogit = false,
 	windsurf = false,
 	undo_glow = false,
+	milli = false,
+	milli_splash = "fire",
+	milli_loop = true,
 }

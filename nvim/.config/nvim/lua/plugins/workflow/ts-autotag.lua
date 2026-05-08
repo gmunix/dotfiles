@@ -1,5 +1,10 @@
+local tooling = require("core.tooling")
+
 return {
 	"windwp/nvim-ts-autotag",
+	cond = function()
+		return tooling.can_install_treesitter_parsers()
+	end,
 	event = { "InsertEnter" },
 	dependencies = { "nvim-treesitter/nvim-treesitter" },
 	config = function()
@@ -16,8 +21,6 @@ return {
 				"javascript",
 				"javascriptreact",
 				"less",
-				"markdown",
-				"markdown_inline",
 				"pug",
 				"sass",
 				"scss",

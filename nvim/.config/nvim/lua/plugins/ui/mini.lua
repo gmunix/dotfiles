@@ -1,3 +1,6 @@
+local dashboard = require("dotfiles.dashboard")
+local profile = require("core.profile")
+
 return {
 	{
 		"echasnovski/mini.nvim",
@@ -28,23 +31,34 @@ return {
 
 			local starter = require("mini.starter")
 			starter.setup({
-				header = "NEOVIM",
-				footer = function()
-					return ("Loaded %d plugins"):format(#require("lazy").plugins())
-				end,
+				header = dashboard.logo,
+				footer = dashboard.footer,
 				items = {
-					starter.sections.builtin_actions(),
 					{
-						{ name = "Find file", action = "Telescope find_files", section = "Telescope" },
-						{ name = "Recent files", action = "Telescope oldfiles", section = "Telescope" },
-						{ name = "Config", action = "edit $MYVIMRC", section = "Config" },
+						{ name = "Find file", action = "Telescope find_files", section = "Actions" },
+						{ name = "Live grep", action = "Telescope live_grep", section = "Actions" },
+						{ name = "Recent files", action = "Telescope oldfiles", section = "Actions" },
+						{ name = "Edit config", action = "edit $MYVIMRC", section = "Actions" },
+						{ name = "Health check", action = "checkhealth dotfiles", section = "System" },
+						{ name = "Lazy", action = "Lazy", section = "System" },
+						{ name = "Quit", action = "qa", section = "System" },
 					},
 				},
 				content_hooks = {
-					starter.gen_hook.adding_bullet(),
+					starter.gen_hook.adding_bullet("  "),
 					starter.gen_hook.aligning("center", "center"),
 				},
 			})
+
+			if profile.enabled("milli") then
+				local ok, milli = pcall(require, "milli")
+				if ok then
+					milli.starter({
+						splash = profile.get("milli_splash", "fire"),
+						loop = profile.get("milli_loop", true),
+					})
+				end
+			end
 		end,
 		keys = {
 			{

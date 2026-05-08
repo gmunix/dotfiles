@@ -93,6 +93,14 @@ function M.has_compiler()
 	return M.has_any({ "cc", "gcc", "clang" }) and M.has_any({ "make", "gmake" })
 end
 
+function M.has_tree_sitter_cli()
+	return M.has("tree-sitter")
+end
+
+function M.can_install_treesitter_parsers()
+	return M.has_compiler() and M.has_tree_sitter_cli()
+end
+
 function M.missing(dependencies)
 	local missing = {}
 	for _, dependency in ipairs(dependencies) do
@@ -140,7 +148,7 @@ function M.mason_tools()
 end
 
 function M.treesitter_ensure_installed()
-	if not M.has_compiler() then
+	if not M.can_install_treesitter_parsers() then
 		return {}
 	end
 
