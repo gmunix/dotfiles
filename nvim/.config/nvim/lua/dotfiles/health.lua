@@ -92,6 +92,16 @@ function M.register()
 		vim.cmd("checkhealth dotfiles")
 	end, { desc = "Run dotfiles Neovim health checks" })
 
+	if not tooling.can_install_treesitter_parsers() and vim.fn.exists(":TSUpdate") == 0 then
+		pcall(vim.api.nvim_create_user_command, "TSUpdate", function()
+			vim.notify(
+				"nvim-treesitter is disabled because tree-sitter CLI is missing. Run scripts/nvim-deps.sh --install, restart Neovim, then run :TSUpdate.",
+				vim.log.levels.WARN,
+				{ title = "dotfiles" }
+			)
+		end, { desc = "Explain why nvim-treesitter update is unavailable" })
+	end
+
 	local group = vim.api.nvim_create_augroup("dotfiles_health", { clear = true })
 	vim.api.nvim_create_autocmd("VimEnter", {
 		group = group,

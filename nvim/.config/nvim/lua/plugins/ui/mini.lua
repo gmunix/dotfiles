@@ -30,8 +30,25 @@ return {
 			vim.keymap.set("n", "yss", "ys_", { remap = true, desc = "Surround line" })
 
 			local starter = require("mini.starter")
+			local header = dashboard.logo
+
+			if profile.enabled("milli") then
+				local ok, milli = pcall(require, "milli")
+				if ok then
+					local milli_opts = {
+						splash = profile.get("milli_splash", "fire"),
+						loop = profile.get("milli_loop", true),
+					}
+					local data_ok, data = pcall(milli.load, milli_opts)
+					if data_ok and data and data.frames and data.frames[1] then
+						header = table.concat(data.frames[1], "\n")
+						milli.starter(milli_opts)
+					end
+				end
+			end
+
 			starter.setup({
-				header = dashboard.logo,
+				header = header,
 				footer = dashboard.footer,
 				items = {
 					{
@@ -50,15 +67,6 @@ return {
 				},
 			})
 
-			if profile.enabled("milli") then
-				local ok, milli = pcall(require, "milli")
-				if ok then
-					milli.starter({
-						splash = profile.get("milli_splash", "fire"),
-						loop = profile.get("milli_loop", true),
-					})
-				end
-			end
 		end,
 		keys = {
 			{
