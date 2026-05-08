@@ -36,7 +36,7 @@ return {
 				local ok, milli = pcall(require, "milli")
 				if ok then
 					local milli_opts = {
-						splash = profile.get("milli_splash", "fire"),
+						splash = profile.pick("milli_splash", "fire"),
 						loop = profile.get("milli_loop", true),
 					}
 					local data_ok, data = pcall(milli.load, milli_opts)
@@ -66,7 +66,6 @@ return {
 					starter.gen_hook.aligning("center", "center"),
 				},
 			})
-
 		end,
 		keys = {
 			{

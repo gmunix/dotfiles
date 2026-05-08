@@ -6,6 +6,6 @@ return {
 	windsurf = false,
 	undo_glow = false,
 	milli = false,
-	milli_splash = "fire",
+	milli_splash = { "fire", "robot", "skullone" },
 	milli_loop = true,
 }

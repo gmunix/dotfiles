@@ -66,4 +66,18 @@ function M.get(name, fallback)
 	return value
 end
 
+function M.pick(name, fallback)
+	local value = M.get(name, fallback)
+	if type(value) ~= "table" then
+		return value
+	end
+
+	if #value == 0 then
+		return fallback
+	end
+
+	local index = (vim.uv.hrtime() % #value) + 1
+	return value[index]
+end
+
 return M
