@@ -52,17 +52,15 @@ return {
 				footer = dashboard.footer,
 				items = {
 					{
-						{ name = "Find file", action = "Telescope find_files", section = "Actions" },
-						{ name = "Live grep", action = "Telescope live_grep", section = "Actions" },
-						{ name = "Recent files", action = "Telescope oldfiles", section = "Actions" },
-						{ name = "Edit config", action = "edit $MYVIMRC", section = "Actions" },
-						{ name = "Health check", action = "checkhealth dotfiles", section = "System" },
-						{ name = "Lazy", action = "Lazy", section = "System" },
-						{ name = "Quit", action = "qa", section = "System" },
+						{ name = "Explore", action = "Oil", section = "Start" },
+						{ name = "Find file", action = "Telescope find_files", section = "Start" },
+						{ name = "Edit config", action = "edit $MYVIMRC", section = "Start" },
+						{ name = "Exit", action = "qa", section = "Start" },
 					},
 				},
 				content_hooks = {
 					starter.gen_hook.adding_bullet("  "),
+					starter.gen_hook.padding(2, 2),
 					starter.gen_hook.aligning("center", "center"),
 				},
 			})
