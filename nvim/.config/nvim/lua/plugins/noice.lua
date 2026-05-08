@@ -1,14 +1,19 @@
 return {
 	"folke/noice.nvim",
 	event = "VeryLazy",
+	keys = {
+		{ "<leader>nd", "<cmd>NoiceDismiss<CR>", desc = "Dismiss notifications" },
+	},
 	dependencies = {
 		"MunifTanjim/nui.nvim",
 		"rcarriga/nvim-notify",
 	},
 	config = function()
-		vim.notify = require("notify").setup({
+		local notify = require("notify")
+		notify.setup({
 			background_colour = "#000000",
 		})
+		vim.notify = notify
 
 		require("noice").setup({
 			lsp = {

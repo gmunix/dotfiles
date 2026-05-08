@@ -1,13 +1,24 @@
+local lsp = require("core.lsp")
+local tooling = require("core.tooling")
+
 return {
 	"elixir-tools/elixir-tools.nvim",
 	version = "*",
 	ft = { "elixir", "eelixir", "heex", "surface" },
 	dependencies = { "nvim-lua/plenary.nvim" },
 	config = function()
+		if not tooling.has_elixir() then
+			vim.notify(
+				"elixir/mix missing; skipping elixir-tools setup. Run :DotfilesHealth for details.",
+				vim.log.levels.WARN
+			)
+			return
+		end
+
 		local elixir = require("elixir")
 		local elixirls = require("elixir.elixirls")
 		local elixir_utils = require("elixir.utils")
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+		local capabilities = lsp.capabilities()
 		local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/"
 
 		local function on_attach(client, bufnr)
@@ -16,14 +27,10 @@ return {
 				client.server_capabilities.documentFormattingProvider = false
 				client.server_capabilities.documentRangeFormattingProvider = false
 			end
+			lsp.on_attach(client, bufnr)
 			local map = function(mode, lhs, rhs, desc)
 				vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
 			end
-			map("n", "K", vim.lsp.buf.hover, "Hover")
-			map("n", "gd", vim.lsp.buf.definition, "Go to definition")
-			map("n", "gr", vim.lsp.buf.references, "References")
-			map("n", "<leader>ca", vim.lsp.buf.code_action, "Code action")
-			map("n", "<leader>rn", vim.lsp.buf.rename, "Rename")
 			map("n", "<leader>eo", "<cmd>ElixirOutputPanel<CR>", "ElixirLS output")
 		end
 

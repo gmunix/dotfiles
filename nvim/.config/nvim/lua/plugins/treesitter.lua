@@ -1,30 +1,17 @@
+local tooling = require("core.tooling")
+
 return {
 	"nvim-treesitter/nvim-treesitter",
-	build = ":TSUpdate",
+	build = function()
+		if tooling.has_compiler() then
+			vim.cmd.TSUpdate()
+		end
+	end,
 	config = function()
 		local config = require("nvim-treesitter.configs")
 		config.setup({
-			ensure_installed = {
-				"bash",
-				"css",
-				"elixir",
-				"eex",
-				"heex",
-				"html",
-				"javascript",
-				"json",
-				"lua",
-				"markdown",
-				"markdown_inline",
-				"python",
-				"query",
-				"tsx",
-				"typescript",
-				"vim",
-				"vimdoc",
-				"yaml",
-			},
-			auto_install = true,
+			ensure_installed = tooling.treesitter_ensure_installed(),
+			auto_install = tooling.has_compiler(),
 			highlight = { enable = true },
 			indent = { enable = true },
 		})
