@@ -3,18 +3,15 @@ local tooling = require("core.tooling")
 return {
 	"nvim-treesitter/nvim-treesitter",
 	branch = "main",
+	cond = function()
+		return tooling.can_install_treesitter_parsers()
+	end,
 	lazy = false,
 	build = function()
-		if tooling.can_install_treesitter_parsers() then
-			vim.cmd.TSUpdate()
-		end
+		vim.cmd.TSUpdate()
 	end,
 	config = function()
 		require("nvim-treesitter").setup()
-
-		if not tooling.can_install_treesitter_parsers() then
-			return
-		end
 
 		require("nvim-treesitter").install(tooling.treesitter_parsers)
 
