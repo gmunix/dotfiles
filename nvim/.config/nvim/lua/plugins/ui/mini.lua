@@ -1,6 +1,12 @@
 local dashboard = require("dotfiles.dashboard")
 local profile = require("core.profile")
 
+local function hide_sections(content)
+	return vim.tbl_filter(function(line)
+		return not (line[1] and line[1].type == "section")
+	end, content)
+end
+
 return {
 	{
 		"echasnovski/mini.nvim",
@@ -52,13 +58,14 @@ return {
 				footer = dashboard.footer,
 				items = {
 					{
-						{ name = "Explore", action = "Oil", section = "Start" },
-						{ name = "Find file", action = "Telescope find_files", section = "Start" },
-						{ name = "Edit config", action = "edit $MYVIMRC", section = "Start" },
-						{ name = "Exit", action = "qa", section = "Start" },
+						{ name = "Explore", action = "Oil", section = "start" },
+						{ name = "Find file", action = "Telescope find_files", section = "start" },
+						{ name = "Edit config", action = "edit $MYVIMRC", section = "start" },
+						{ name = "Quit", action = "qa", section = "start" },
 					},
 				},
 				content_hooks = {
+					hide_sections,
 					starter.gen_hook.adding_bullet("  "),
 					starter.gen_hook.padding(2, 2),
 					starter.gen_hook.aligning("center", "center"),
