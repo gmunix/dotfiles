@@ -77,7 +77,7 @@ if [[ "$install" != true ]]; then
 fi
 
 if has brew; then
-  brew install git curl unzip gnu-tar gzip ripgrep node python@3 tree-sitter
+  brew install git curl unzip gnu-tar gzip ripgrep node python@3 tree-sitter-cli
   if ! has_any cc gcc clang; then
     xcode-select --install || true
   fi
