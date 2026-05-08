@@ -1,6 +1,11 @@
+local profile = require("core.profile")
+
 return {
 	{
 		"rest-nvim/rest.nvim",
+		cond = function()
+			return profile.enabled("rest")
+		end,
 		ft = "http",
 		dependencies = {
 			{

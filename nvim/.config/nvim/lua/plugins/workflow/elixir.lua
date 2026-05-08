@@ -22,7 +22,7 @@ return {
 		local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/"
 
 		local function on_attach(client, bufnr)
-			-- Rely on conform.nvim for formatting to avoid double formatters/diagnostics
+			-- Rely on conform.nvim for formatting to avoid double formatters/diagnostics.
 			if client and client.server_capabilities then
 				client.server_capabilities.documentFormattingProvider = false
 				client.server_capabilities.documentRangeFormattingProvider = false

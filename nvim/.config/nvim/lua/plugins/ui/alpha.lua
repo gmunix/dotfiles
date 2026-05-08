@@ -11,8 +11,6 @@ return {
 		local dashboard = require("alpha.themes.dashboard")
 		local ascii = require("ascii")
 
-		-- dashboard.section.header.val = ascii.get_random("text", "doom")
-		-- dashboard.section.header.val = ascii.art.gaming.doom.logo
 		dashboard.section.header.val = ascii.art.text.neovim.sharp
 
 		dashboard.section.buttons.val = {

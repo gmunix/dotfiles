@@ -1,5 +1,10 @@
+local profile = require("core.profile")
+
 return {
 	"y3owk1n/undo-glow.nvim",
+	cond = function()
+		return profile.enabled("undo_glow")
+	end,
 	event = { "VeryLazy" },
 	---@type UndoGlow.Config
 	opts = {
@@ -10,27 +15,13 @@ return {
 			window_scoped = true,
 		},
 		highlights = {
-			undo = {
-				hl_color = { bg = "#693232" }, -- Dark muted red
-			},
-			redo = {
-				hl_color = { bg = "#2F4640" }, -- Dark muted green
-			},
-			yank = {
-				hl_color = { bg = "#7A683A" }, -- Dark muted yellow
-			},
-			paste = {
-				hl_color = { bg = "#325B5B" }, -- Dark muted cyan
-			},
-			search = {
-				hl_color = { bg = "#5C475C" }, -- Dark muted purple
-			},
-			comment = {
-				hl_color = { bg = "#7A5A3D" }, -- Dark muted orange
-			},
-			cursor = {
-				hl_color = { bg = "#793D54" }, -- Dark muted pink
-			},
+			undo = { hl_color = { bg = "#693232" } },
+			redo = { hl_color = { bg = "#2F4640" } },
+			yank = { hl_color = { bg = "#7A683A" } },
+			paste = { hl_color = { bg = "#325B5B" } },
+			search = { hl_color = { bg = "#5C475C" } },
+			comment = { hl_color = { bg = "#7A5A3D" } },
+			cursor = { hl_color = { bg = "#793D54" } },
 		},
 		priority = 2048 * 3,
 	},
@@ -74,11 +65,7 @@ return {
 		{
 			"n",
 			function()
-				require("undo-glow").search_next({
-					animation = {
-						animation_type = "strobe",
-					},
-				})
+				require("undo-glow").search_next({ animation = { animation_type = "strobe" } })
 			end,
 			mode = "n",
 			desc = "Search next with highlight",
@@ -87,11 +74,7 @@ return {
 		{
 			"N",
 			function()
-				require("undo-glow").search_prev({
-					animation = {
-						animation_type = "strobe",
-					},
-				})
+				require("undo-glow").search_prev({ animation = { animation_type = "strobe" } })
 			end,
 			mode = "n",
 			desc = "Search prev with highlight",
@@ -100,11 +83,7 @@ return {
 		{
 			"*",
 			function()
-				require("undo-glow").search_star({
-					animation = {
-						animation_type = "strobe",
-					},
-				})
+				require("undo-glow").search_star({ animation = { animation_type = "strobe" } })
 			end,
 			mode = "n",
 			desc = "Search star with highlight",
@@ -113,11 +92,7 @@ return {
 		{
 			"#",
 			function()
-				require("undo-glow").search_hash({
-					animation = {
-						animation_type = "strobe",
-					},
-				})
+				require("undo-glow").search_hash({ animation = { animation_type = "strobe" } })
 			end,
 			mode = "n",
 			desc = "Search hash with highlight",
@@ -126,7 +101,6 @@ return {
 		{
 			"gc",
 			function()
-				-- This is an implementation to preserve the cursor position
 				local pos = vim.fn.getpos(".")
 				vim.schedule(function()
 					vim.fn.setpos(".", pos)
@@ -153,28 +127,23 @@ return {
 				return require("undo-glow").comment_line()
 			end,
 			mode = "n",
-			desc = "Toggle comment line with highlight",
+			desc = "Toggle comment line",
 			expr = true,
 			noremap = true,
 		},
 	},
 	init = function()
 		vim.api.nvim_create_autocmd("TextYankPost", {
-			desc = "Highlight when yanking (copying) text",
+			desc = "Highlight when yanking text",
 			callback = function()
 				require("undo-glow").yank()
 			end,
 		})
 
-		-- This only handles neovim instance and do not highlight when switching panes in tmux
 		vim.api.nvim_create_autocmd("CursorMoved", {
 			desc = "Highlight when cursor moved significantly",
 			callback = function()
-				require("undo-glow").cursor_moved({
-					animation = {
-						animation_type = "slide",
-					},
-				})
+				require("undo-glow").cursor_moved({ animation = { animation_type = "slide" } })
 			end,
 		})
 
@@ -182,11 +151,7 @@ return {
 			pattern = { "/", "?" },
 			desc = "Highlight when search cmdline leave",
 			callback = function()
-				require("undo-glow").search_cmd({
-					animation = {
-						animation_type = "fade",
-					},
-				})
+				require("undo-glow").search_cmd({ animation = { animation_type = "fade" } })
 			end,
 		})
 	end,

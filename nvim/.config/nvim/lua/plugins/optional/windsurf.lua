@@ -1,5 +1,11 @@
+local profile = require("core.profile")
+
 return {
 	"Exafunction/windsurf.nvim",
+	cond = function()
+		return profile.enabled("windsurf")
+	end,
+	event = "InsertEnter",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"hrsh7th/nvim-cmp",

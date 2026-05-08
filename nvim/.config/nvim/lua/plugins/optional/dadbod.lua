@@ -1,6 +1,11 @@
+local profile = require("core.profile")
+
 return {
 	{
 		"kristijanhusak/vim-dadbod-ui",
+		cond = function()
+			return profile.enabled("dadbod")
+		end,
 		dependencies = {
 			{ "tpope/vim-dadbod", lazy = true },
 			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
