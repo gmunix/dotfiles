@@ -1,0 +1,18 @@
+# Source-only files.
+README.md
+.gitignore
+
+{{- if ne .machine.role "desktop" }}
+.config/ghostty
+{{- end }}
+
+{{- if or (ne .chezmoi.os "darwin") (ne .machine.role "desktop") }}
+.aerospace.toml
+.config/sketchybar
+{{- end }}
+
+{{- if or (ne .chezmoi.os "linux") (ne .machine.role "desktop") }}
+.config/hypr
+.config/swaync
+.config/waybar
+{{- end }}

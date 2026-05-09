@@ -1,0 +1,124 @@
+{{- $manager := .packages.manager | default "none" -}}
+{{- $selectedGroups := .packages.groups | default (list "base" "nvim") -}}
+{{- if eq $manager "brew" -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v brew >/dev/null 2>&1; then
+  printf 'Homebrew is required before package installation can run.\n' >&2
+  exit 1
+fi
+
+brew bundle --file=/dev/stdin <<'BREWFILE'
+{{- range $groupName := $selectedGroups }}
+{{- $group := index $.package_catalog.groups $groupName }}
+{{- range $tap := $group.brew.taps }}
+tap {{ $tap | quote }}
+{{- end }}
+{{- range $brew := $group.brew.brews }}
+brew {{ $brew | quote }}
+{{- end }}
+{{- range $cask := $group.brew.casks }}
+cask {{ $cask | quote }}
+{{- end }}
+{{- end }}
+BREWFILE
+{{- else if eq $manager "apt" -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v apt-get >/dev/null 2>&1; then
+  printf 'apt-get is not available on this machine.\n' >&2
+  exit 1
+fi
+
+raw_packages=(
+{{- range $groupName := $selectedGroups }}
+{{- $group := index $.package_catalog.groups $groupName }}
+{{- range $package := $group.apt }}
+  {{ $package | quote }}
+{{- end }}
+{{- end }}
+)
+
+declare -A seen=()
+packages=()
+for package in "${raw_packages[@]}"; do
+  if [[ -n "${seen[$package]+x}" ]]; then
+    continue
+  fi
+  seen[$package]=1
+  packages+=("$package")
+done
+
+available=()
+missing=()
+sudo apt-get update
+for package in "${packages[@]}"; do
+  if dpkg -s "$package" >/dev/null 2>&1; then
+    continue
+  fi
+  if apt-cache show "$package" >/dev/null 2>&1; then
+    available+=("$package")
+  else
+    missing+=("$package")
+  fi
+done
+
+if ((${#available[@]} > 0)); then
+  sudo apt-get install -y "${available[@]}"
+fi
+
+if ((${#missing[@]} > 0)); then
+  printf 'Skipped unavailable apt packages: %s\n' "${missing[*]}" >&2
+fi
+{{- else if eq $manager "pacman" -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v pacman >/dev/null 2>&1; then
+  printf 'pacman is not available on this machine.\n' >&2
+  exit 1
+fi
+
+raw_packages=(
+{{- range $groupName := $selectedGroups }}
+{{- $group := index $.package_catalog.groups $groupName }}
+{{- range $package := $group.pacman }}
+  {{ $package | quote }}
+{{- end }}
+{{- end }}
+)
+
+declare -A seen=()
+packages=()
+for package in "${raw_packages[@]}"; do
+  if [[ -n "${seen[$package]+x}" ]]; then
+    continue
+  fi
+  seen[$package]=1
+  packages+=("$package")
+done
+
+available=()
+missing=()
+sudo pacman -Sy --noconfirm
+for package in "${packages[@]}"; do
+  if pacman -Q "$package" >/dev/null 2>&1; then
+    continue
+  fi
+  if pacman -Si "$package" >/dev/null 2>&1; then
+    available+=("$package")
+  else
+    missing+=("$package")
+  fi
+done
+
+if ((${#available[@]} > 0)); then
+  sudo pacman -S --needed --noconfirm "${available[@]}"
+fi
+
+if ((${#missing[@]} > 0)); then
+  printf 'Skipped unavailable pacman packages: %s\n' "${missing[*]}" >&2
+fi
+{{- end }}

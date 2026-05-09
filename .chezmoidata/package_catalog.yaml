@@ -1,0 +1,151 @@
+package_catalog:
+  groups:
+    base:
+      brew:
+        taps: []
+        brews:
+          - chezmoi
+          - curl
+          - fd
+          - fzf
+          - git
+          - jq
+          - neovim
+          - ripgrep
+          - tmux
+          - wget
+          - zsh
+        casks: []
+      apt:
+        - chezmoi
+        - curl
+        - fd-find
+        - fzf
+        - git
+        - jq
+        - neovim
+        - ripgrep
+        - tmux
+        - wget
+        - zsh
+      pacman:
+        - chezmoi
+        - curl
+        - fd
+        - fzf
+        - git
+        - jq
+        - neovim
+        - ripgrep
+        - tmux
+        - wget
+        - zsh
+    nvim:
+      brew:
+        taps: []
+        brews:
+          - unzip
+          - gnu-tar
+          - gzip
+          - node
+          - python@3
+          - tree-sitter-cli
+        casks: []
+      apt:
+        - build-essential
+        - gzip
+        - nodejs
+        - npm
+        - python3
+        - python3-venv
+        - tar
+        - tree-sitter-cli
+        - unzip
+      pacman:
+        - base-devel
+        - gzip
+        - nodejs
+        - npm
+        - python
+        - tar
+        - tree-sitter-cli
+        - unzip
+    desktop:
+      brew:
+        taps: []
+        brews: []
+        casks:
+          - font-hack-nerd-font
+          - font-jetbrains-mono-nerd-font
+          - ghostty
+      apt:
+        - fonts-hack-ttf
+        - fonts-jetbrains-mono
+      pacman:
+        - ghostty
+        - ttf-hack-nerd
+        - ttf-jetbrains-mono-nerd
+    macos-desktop:
+      brew:
+        taps:
+          - FelixKratz/formulae
+          - nikitabobko/tap
+        brews:
+          - sketchybar
+        casks:
+          - aerospace
+      apt: []
+      pacman: []
+    linux-desktop:
+      brew:
+        taps: []
+        brews: []
+        casks: []
+      apt:
+        - brightnessctl
+        - cava
+        - hyprlock
+        - hyprland
+        - hyprpaper
+        - hyprpicker
+        - hyprshot
+        - obs-studio
+        - playerctl
+        - rofi
+        - sway-notification-center
+        - waybar
+        - wireplumber
+      pacman:
+        - bluetui
+        - brightnessctl
+        - cava
+        - hyprlock
+        - hyprland
+        - hyprpaper
+        - hyprpicker
+        - hyprshot
+        - impala
+        - obs-studio
+        - playerctl
+        - rofi
+        - swaync
+        - waybar
+        - wiremix
+        - wireplumber
+    server:
+      brew:
+        taps: []
+        brews: []
+        casks: []
+      apt: []
+      pacman: []
+    secrets:
+      brew:
+        taps: []
+        brews:
+          - bitwarden-cli
+        casks: []
+      apt:
+        - bitwarden-cli
+      pacman:
+        - bitwarden-cli

@@ -1,0 +1,16 @@
+{{- $splash := .features.nvim.milliSplash | default (list "shader" "lights" "ididnot") -}}
+return {
+	obsidian = {{ .features.nvim.obsidian | default false }},
+	dadbod = {{ .features.nvim.dadbod | default false }},
+	rest = {{ .features.nvim.rest | default false }},
+	neogit = {{ .features.nvim.neogit | default true }},
+	windsurf = {{ .features.nvim.windsurf | default false }},
+	undo_glow = {{ .features.nvim.undoGlow | default false }},
+	milli = {{ .features.nvim.milli | default false }},
+	milli_splash = {
+{{- range $splash }}
+		{{ . | quote }},
+{{- end }}
+	},
+	milli_loop = {{ .features.nvim.milliLoop | default false }},
+}

@@ -1,0 +1,48 @@
+{{- $role := promptChoiceOnce . "role" "Machine role" (list "desktop" "server") "desktop" -}}
+{{- $homebrewPrefix := "/opt/homebrew" -}}
+{{- if eq .chezmoi.arch "amd64" -}}
+{{- $homebrewPrefix = "/usr/local" -}}
+{{- end -}}
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
+[data.machine]
+role = {{ $role | quote }}
+hostname = {{ .chezmoi.hostname | quote }}
+
+[data.packages]
+manager = {{ if eq .chezmoi.os "darwin" }}"brew"{{ else if eq .chezmoi.os "linux" }}{{ promptChoiceOnce . "packageManager" "Linux package manager" (list "apt" "pacman" "none") "apt" | quote }}{{ else }}"none"{{ end }}
+groups = [
+  "base",
+  "nvim",
+{{- if eq $role "desktop" }}
+  "desktop",
+{{- if eq .chezmoi.os "darwin" }}
+  "macos-desktop",
+{{- else if eq .chezmoi.os "linux" }}
+  "linux-desktop",
+{{- end }}
+{{- else if eq $role "server" }}
+  "server",
+{{- end }}
+]
+
+[data.paths]
+notes = "~/Notes/zettelkasten"
+homebrewPrefix = {{ $homebrewPrefix | quote }}
+aerospaceBin = {{ printf "%s/bin/aerospace" $homebrewPrefix | quote }}
+sketchybarBin = {{ printf "%s/bin/sketchybar" $homebrewPrefix | quote }}
+
+[data.features.nvim]
+obsidian = {{ eq $role "desktop" }}
+dadbod = {{ eq $role "desktop" }}
+rest = {{ eq $role "desktop" }}
+neogit = true
+windsurf = {{ eq $role "desktop" }}
+undoGlow = {{ eq $role "desktop" }}
+milli = {{ eq $role "desktop" }}
+milliSplash = ["shader", "lights", "ididnot"]
+milliLoop = {{ eq $role "desktop" }}
+
+[data.linux]
+hwmonPath = "/sys/class/hwmon/hwmon0/temp1_input"
+hyprMonitors = ["monitor=,preferred,0x0,1"]
