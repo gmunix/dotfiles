@@ -1,9 +1,0 @@
-################
-### MONITORS ###
-################
-
-# See https://wiki.hypr.land/Configuring/Monitors/
-# monitor=,preferred,2560x1440,1
-{{- range (.linux.hyprMonitors | default (list "monitor=,preferred,0x0,1")) }}
-{{ . }}
-{{- end }}

@@ -87,12 +87,12 @@ There is one chezmoi source tree, but it renders different results by OS and rol
 OS controls platform-specific files:
 
 - macOS desktop applies AeroSpace and SketchyBar
-- Linux desktop applies Hyprland, SwayNC, and Waybar
+- Linux desktop currently installs desktop packages only; Hyprland, SwayNC, and Waybar configs are intentionally rebuilt per machine for now
 - non-matching OS files are ignored through `.chezmoiignore`
 
 Role controls how much of the setup is applied:
 
-- `desktop` gets shared terminal/editor config plus GUI desktop packages/configs for the current OS, including Ghostty config
+- `desktop` gets shared terminal/editor config plus GUI desktop packages for the current OS, including Ghostty config
 - `server` gets shared terminal/editor config and avoids GUI desktop packages/configs
 
 Neovim's `lua/local/profile.lua` is generated per host from `[data.features.nvim]` in `~/.config/chezmoi/chezmoi.toml`. The default desktop profile enables optional UI/workflow plugins like Obsidian, Dadbod, REST, Windsurf, undo-glow, and Milli. The default server profile disables those heavier optional plugins while keeping core Neovim and Neogit enabled.
