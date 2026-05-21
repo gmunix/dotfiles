@@ -1,16 +1,24 @@
 [metadata]
-name = "work"
+name = "worktree"
 description = "Select a worktree for MeetRox"
 requirements = ["git"]
 
 [source]
 command = "source $HOME/.config/zsh-work/worktree.zsh && worktree-list"
+shell = "zsh"
 
 [keybindings]
 enter = "actions:open"
+ctrl-d = "actions:delete"
 
 [actions.open]
 description = "Opens tmux session on worktree"
-command = "worktree-open {}"
+command = "source $HOME/.config/zsh-work/worktree.zsh && worktree-open '{}'"
+shell = "zsh"
 mode = "execute"
 
+[actions.delete]
+description = "Deletes a worktree"
+command = "worktree-delete '{}' && tv worktree"
+shell = "zsh"
+mode = "execute"
