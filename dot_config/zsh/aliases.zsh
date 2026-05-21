@@ -1,11 +1,10 @@
 alias ll="ls -la"
 
 alias tn="tmux new -s"
-alias ta="tmux-attach"
 alias ts="tmux ls"
 
 alias td="tmux-dev"
-alias dotf="tmux-dev dotfiles $HOME/dotfiles"
+alias dot="tmux new -s dotfiles -c ~/dotfiles/"
 alias zet="zettelkasten"
 
 alias gl="git log"
