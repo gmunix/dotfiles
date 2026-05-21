@@ -1,0 +1,16 @@
+[metadata]
+name = "work"
+description = "Select a worktree for MeetRox"
+requirements = ["git"]
+
+[source]
+command = "source $HOME/.config/zsh-work/worktree.zsh && worktree-list"
+
+[keybindings]
+enter = "actions:open"
+
+[actions.open]
+description = "Opens tmux session on worktree"
+command = "worktree-open {}"
+mode = "execute"
+

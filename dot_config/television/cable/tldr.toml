@@ -1,0 +1,18 @@
+[metadata]
+name = "tldr"
+description = "Browse and preview TLDR help pages"
+requirements = ["tldr"]
+
+[source]
+command = "tldr --list"
+
+[keybindings]
+enter = "actions:open"
+
+[preview]
+command = "tldr '{}'"
+
+[actions.open]
+description = "Open TLDR page in pager"
+command = "tldr '{}' | less"
+mode = "fork"

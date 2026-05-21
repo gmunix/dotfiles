@@ -3,6 +3,7 @@ alias ll="ls -la"
 alias tn="tmux new -s"
 alias ts="tmux ls"
 
+alias ta="tv tmux-sessions"
 alias td="tmux-dev"
 alias dot="tmux new -s dotfiles -c ~/dotfiles/"
 alias zet="zettelkasten"
