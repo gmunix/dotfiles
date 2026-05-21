@@ -5,12 +5,13 @@ requirements = ["git"]
 
 [source]
 command = "source $HOME/.config/zsh-work/worktree.zsh && worktree-list"
+shell = "zsh"
 
 [keybindings]
 enter = "actions:open"
 
 [actions.open]
 description = "Opens tmux session on worktree"
-command = "worktree-open {}"
+command = "source $HOME/.config/zsh-work/worktree.zsh && worktree-open '{}'"
+shell = "zsh"
 mode = "execute"
-
