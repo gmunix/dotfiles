@@ -88,6 +88,10 @@ sketchybar --add item clock right \
            --add item volume right \
            --set volume script="$PLUGIN_DIR/volume.sh" \
            --subscribe volume volume_change \
+           --add item cpu right \
+           --set cpu update_freq=5 icon= script="$PLUGIN_DIR/cpu.sh" \
+           --add item ram right \
+           --set ram update_freq=15 icon= script="$PLUGIN_DIR/ram.sh" \
            --add item battery right \
            --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
            --subscribe battery system_woke power_source_change \
