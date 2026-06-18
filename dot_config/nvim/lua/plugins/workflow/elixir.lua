@@ -21,6 +21,17 @@ return {
 		local capabilities = lsp.capabilities()
 		local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/"
 
+		elixirls.on_attach = function(client, bufnr)
+			local add_user_cmd = vim.api.nvim_buf_create_user_command
+			add_user_cmd(bufnr, "ElixirFromPipe", elixirls.from_pipe(client), {})
+			add_user_cmd(bufnr, "ElixirToPipe", elixirls.to_pipe(client), {})
+			add_user_cmd(bufnr, "ElixirRestart", elixirls.restart(client), {})
+			add_user_cmd(bufnr, "ElixirExpandMacro", elixirls.expand_macro(client), { range = true })
+			add_user_cmd(bufnr, "ElixirOutputPanel", function()
+				elixirls.open_output_panel()
+			end, {})
+		end
+
 		local function on_attach(client, bufnr)
 			-- Rely on conform.nvim for formatting to avoid double formatters/diagnostics.
 			if client and client.server_capabilities then
@@ -72,8 +83,8 @@ return {
 				capabilities = capabilities,
 				settings = elixirls.settings({
 					dialyzerEnabled = false,
-					fetchDeps = true,
-					enableTestLenses = true,
+					fetchDeps = false,
+					enableTestLenses = false,
 				}),
 			},
 			credo = {
