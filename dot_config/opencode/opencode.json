@@ -10,11 +10,6 @@
     "hostname": "0.0.0.0"
   },
   "mcp": {
-    "Linear": {
-      "type": "remote",
-      "url": " https://mcp.linear.app/mcp",
-      "oauth": {}
-    },
     "Context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
