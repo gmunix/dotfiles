@@ -1,0 +1,18 @@
+{{- $monitors := .linux.hyprMonitors | default (list (dict "mode" "preferred" "position" "auto" "scale" 1)) -}}
+{{ range $monitor := $monitors -}}
+hl.monitor({
+{{- if hasKey $monitor "output" }}
+	output = {{ index $monitor "output" | quote }},
+{{- end }}
+	mode = {{ index $monitor "mode" | default "preferred" | quote }},
+	position = {{ index $monitor "position" | default "auto" | quote }},
+	scale = {{ index $monitor "scale" | default 1 }},
+{{- if hasKey $monitor "mirror" }}
+	mirror = {{ index $monitor "mirror" | quote }},
+{{- end }}
+{{- if hasKey $monitor "transform" }}
+	transform = {{ index $monitor "transform" }},
+{{- end }}
+})
+
+{{ end -}}
