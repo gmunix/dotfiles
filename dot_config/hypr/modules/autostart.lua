@@ -1,0 +1,1 @@
+-- Keep startup intentionally small until Quickshell and the desktop services are managed here.
