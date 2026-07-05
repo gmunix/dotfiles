@@ -10,3 +10,7 @@ README.md
 .aerospace.toml
 .config/sketchybar
 {{- end }}
+
+{{- if or (ne .chezmoi.os "linux") (ne .machine.role "desktop") }}
+.config/hypr
+{{- end }}

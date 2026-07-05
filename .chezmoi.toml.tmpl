@@ -45,4 +45,8 @@ milliLoop = {{ eq $role "desktop" }}
 
 [data.linux]
 hwmonPath = "/sys/class/hwmon/hwmon0/temp1_input"
-hyprMonitors = ["monitor=,preferred,0x0,1"]
+hyprMonitors = [
+  { output = "DP-2", mode = "preferred", position = "auto-up", scale = 1 },
+  { output = "DP-1", mode = "preferred", position = "auto", scale = 1, mirror = "DP-2" },
+  { output = "HDMI-A-1", mode = "preferred", position = "auto-down", scale = 1, transform = 2 },
+]
