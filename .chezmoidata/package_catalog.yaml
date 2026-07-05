@@ -70,6 +70,7 @@ package_catalog:
         - tar
         - tree-sitter-cli
         - unzip
+        - lazygit
     desktop:
       brew:
         taps: []
