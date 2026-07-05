@@ -1,1 +1,1 @@
--- Keep startup intentionally small until Quickshell and the desktop services are managed here.
+-- Keep startup intentionally small; shell-specific services are added in separate branches.

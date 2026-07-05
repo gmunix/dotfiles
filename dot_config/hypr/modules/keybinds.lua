@@ -15,7 +15,7 @@ function M.setup(apps)
 	hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 	hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(apps.menu))
 	hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-	hl.bind(mainMod .. " + SHIFT + J", hl.dsp.layout("togglesplit"))
+	hl.bind(mainMod .. " + CTRL + J", hl.dsp.layout("togglesplit"))
 	hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
 	hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
