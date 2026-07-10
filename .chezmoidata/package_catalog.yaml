@@ -126,6 +126,7 @@ package_catalog:
         - hyprpicker
         - hyprshot
         - impala
+        - noctalia
         - obs-studio
         - playerctl
         - rofi

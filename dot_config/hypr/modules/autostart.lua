@@ -1,1 +1,6 @@
--- Keep startup intentionally small; shell-specific services are added in separate branches.
+local apps = require("modules.apps")
+
+hl.on("hyprland.start", function()
+	hl.exec_cmd(apps.noctalia)
+	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE && systemctl --user start app-dev.lizardbyte.app.Sunshine")
+end)

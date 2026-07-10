@@ -9,3 +9,6 @@ local apps = require("modules.apps")
 
 require("modules.keybinds").setup(apps)
 require("modules.rules")
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()
