@@ -18,6 +18,7 @@ For tackling tasks you can use tools to help in gathering context, coding, or tr
 - MCP:
   - Context7: Use to gather context about progamming languages, libraries, and frameworks, use always when writing code, first gather context then plan, then code.
   - Linear: Use to gather context about the issues/tasks the developer is working on, use always to ensure the code and the approach fall within the scope (use only for meetrox repos).
+  - code-review-graph: Use to gather context about the code, you should use always when searching repos for context and relations instead of grep/glob, for that you should use the `code-review-graph` skill.
 - Git:
   - Github(`gh` command): Use for gathering context about the repo, other pull requests comments, etc. NEVER run modifiable commands without explicit permission. Can be used with context from linear, since an issue usually points to a PR.
   - Git(`git` command): If the PR is not available on `gh` you can always check other branches on git, gather context about commits, changes, but NEVER run modifiable commands without explicit permission.
