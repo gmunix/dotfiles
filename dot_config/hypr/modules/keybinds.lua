@@ -6,6 +6,7 @@ function M.setup(apps)
 	hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(apps.terminal))
 	hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(apps.browser))
 	hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(apps.launcher))
+	hl.bind(mainMod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("noctalia msg panel-toggle wallpaper"))
 	hl.bind(mainMod .. " + COMMA", hl.dsp.exec_cmd("noctalia msg settings-toggle"))
 	hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center"))
 	hl.bind(mainMod .. " + W", hl.dsp.window.close())
@@ -18,6 +19,7 @@ function M.setup(apps)
 	hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(apps.menu))
 	hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 	hl.bind(mainMod .. " + CTRL + J", hl.dsp.layout("togglesplit"))
+	hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 	hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
 	hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
@@ -29,6 +31,19 @@ function M.setup(apps)
 	hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.move({ direction = "right" }))
 	hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ direction = "up" }))
 	hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.move({ direction = "down" }))
+
+	hl.bind(mainMod .. " + MINUS", hl.dsp.window.resize({ x = -25, y = 0, relative = true }), { repeating = true })
+	hl.bind(mainMod .. " + EQUAL", hl.dsp.window.resize({ x = 25, y = 0, relative = true }), { repeating = true })
+	hl.bind(
+		mainMod .. " + SHIFT + MINUS",
+		hl.dsp.window.resize({ x = 0, y = 25, relative = true }),
+		{ repeating = true }
+	)
+	hl.bind(
+		mainMod .. " + SHIFT + EQUAL",
+		hl.dsp.window.resize({ x = 0, y = -25, relative = true }),
+		{ repeating = true }
+	)
 
 	for i = 1, 10 do
 		local key = i % 10
@@ -47,31 +62,11 @@ function M.setup(apps)
 	hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("noctalia msg screenshot-fullscreen pick"))
 	hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"))
 
-	hl.bind(
-		"XF86AudioRaiseVolume",
-		hl.dsp.exec_cmd("noctalia msg volume-up"),
-		{ locked = true, repeating = true }
-	)
-	hl.bind(
-		"XF86AudioLowerVolume",
-		hl.dsp.exec_cmd("noctalia msg volume-down"),
-		{ locked = true, repeating = true }
-	)
-	hl.bind(
-		"XF86AudioMute",
-		hl.dsp.exec_cmd("noctalia msg volume-mute"),
-		{ locked = true, repeating = true }
-	)
-	hl.bind(
-		"XF86AudioMicMute",
-		hl.dsp.exec_cmd("noctalia msg mic-mute"),
-		{ locked = true, repeating = true }
-	)
-	hl.bind(
-		"XF86MonBrightnessUp",
-		hl.dsp.exec_cmd("noctalia msg brightness-up"),
-		{ locked = true, repeating = true }
-	)
+	hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("noctalia msg volume-up"), { locked = true, repeating = true })
+	hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("noctalia msg volume-down"), { locked = true, repeating = true })
+	hl.bind("XF86AudioMute", hl.dsp.exec_cmd("noctalia msg volume-mute"), { locked = true, repeating = true })
+	hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("noctalia msg mic-mute"), { locked = true, repeating = true })
+	hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("noctalia msg brightness-up"), { locked = true, repeating = true })
 	hl.bind(
 		"XF86MonBrightnessDown",
 		hl.dsp.exec_cmd("noctalia msg brightness-down"),
