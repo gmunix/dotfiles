@@ -66,10 +66,14 @@ function M.setup(apps)
 	hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("noctalia msg volume-down"), { locked = true, repeating = true })
 	hl.bind("XF86AudioMute", hl.dsp.exec_cmd("noctalia msg volume-mute"), { locked = true, repeating = true })
 	hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("noctalia msg mic-mute"), { locked = true, repeating = true })
-	hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("noctalia msg brightness-up"), { locked = true, repeating = true })
+	hl.bind(
+		"XF86MonBrightnessUp",
+		hl.dsp.exec_cmd("noctalia msg brightness-up current"),
+		{ locked = true, repeating = true }
+	)
 	hl.bind(
 		"XF86MonBrightnessDown",
-		hl.dsp.exec_cmd("noctalia msg brightness-down"),
+		hl.dsp.exec_cmd("noctalia msg brightness-down current"),
 		{ locked = true, repeating = true }
 	)
 
