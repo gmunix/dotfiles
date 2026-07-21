@@ -2,15 +2,29 @@
 README.md
 .gitignore
 
-{{- if ne .machine.role "desktop" }}
+{{- $isDesktop := eq .machine.role "desktop" -}}
+{{- $isLinuxDesktop := and $isDesktop (eq .chezmoi.os "linux") -}}
+{{- $hyprland := .features.hyprland | default false -}}
+{{- $noctalia := .features.noctalia | default false -}}
+{{- $spicetify := .features.spicetify | default false -}}
+
+{{- if not $isDesktop }}
 .config/ghostty
 {{- end }}
 
-{{- if or (ne .chezmoi.os "darwin") (ne .machine.role "desktop") }}
+{{- if or (ne .chezmoi.os "darwin") (not $isDesktop) }}
 .aerospace.toml
 .config/sketchybar
 {{- end }}
 
-{{- if or (ne .chezmoi.os "linux") (ne .machine.role "desktop") }}
+{{- if or (not $isLinuxDesktop) (not $hyprland) }}
 .config/hypr
+{{- end }}
+
+{{- if or (not $isLinuxDesktop) (not $noctalia) }}
+.config/noctalia
+{{- end }}
+
+{{- if or (not $isLinuxDesktop) (not $spicetify) }}
+.config/spicetify
 {{- end }}
