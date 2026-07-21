@@ -12,6 +12,7 @@ package_catalog:
           - jq
           - neovim
           - ripgrep
+          - starship
           - tmux
           - wget
           - zsh
@@ -25,6 +26,7 @@ package_catalog:
         - jq
         - neovim
         - ripgrep
+        - starship
         - tmux
         - wget
         - zsh
@@ -37,6 +39,7 @@ package_catalog:
         - jq
         - neovim
         - ripgrep
+        - starship
         - tmux
         - wget
         - zsh
@@ -105,6 +108,7 @@ package_catalog:
       apt:
         - brightnessctl
         - cava
+        - ddcutil
         - hyprlock
         - hyprland
         - hyprpaper
@@ -120,6 +124,7 @@ package_catalog:
         - bluetui
         - brightnessctl
         - cava
+        - ddcutil
         - hyprlock
         - hyprland
         - hyprpaper
