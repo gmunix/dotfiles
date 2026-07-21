@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v starship >/dev/null 2>&1; then
+  printf 'Starship is not installed; skipping prompt configuration.\n' >&2
+  exit 0
+fi
+
+starship config username.disabled true
+starship config hostname.disabled true
+
+config_file="${STARSHIP_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml}"
+marker_begin="# >>> NOCTALIA STARSHIP PALETTE >>>"
+marker_end="# <<< NOCTALIA STARSHIP PALETTE <<<"
+
+if grep -qF "$marker_begin" "$config_file"; then
+  temp_file="$(mktemp "${config_file}.XXXXXX")"
+  trap 'rm -f "$temp_file"' EXIT
+  awk -v marker_begin="$marker_begin" -v marker_end="$marker_end" '
+    $0 == marker_begin { inside_marker = 1 }
+    inside_marker && ($0 == "[username]" || $0 == "[hostname]") && !marker_closed {
+      print marker_end
+      inside_marker = 0
+      marker_closed = 1
+    }
+    $0 == marker_end && marker_closed { next }
+    { print }
+  ' "$config_file" > "$temp_file"
+  cat "$temp_file" > "$config_file"
+fi
