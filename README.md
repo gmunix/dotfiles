@@ -63,6 +63,7 @@ Each machine has local data like this:
 ```toml
 [data.machine]
 role = "desktop" # desktop or server
+desktopProfile = "none" # hyprland or none
 
 [data.packages]
 manager = "brew" # brew, apt, pacman, or none
@@ -87,7 +88,9 @@ There is one chezmoi source tree, but it renders different results by OS and rol
 OS controls platform-specific files:
 
 - macOS desktop applies AeroSpace and SketchyBar
-- Linux desktop currently installs desktop packages only; Hyprland, SwayNC, and Waybar configs are intentionally rebuilt per machine for now
+- Debian/Ubuntu-style Linux desktops use the generic Linux desktop package group
+- Arch-style Linux desktops can select an explicit `hyprland` profile; generic Arch defaults to `none`
+- CachyOS desktops default to the `hyprland` profile and add the CachyOS-packaged Noctalia shell when that default is accepted
 - non-matching OS files are ignored through `.chezmoiignore`
 
 Role controls how much of the setup is applied:
@@ -108,6 +111,19 @@ The install script `.chezmoiscripts/run_onchange_10-install-packages.sh.tmpl` su
 - pacman on Arch-style Linux
 
 Package groups are selected per host through `~/.config/chezmoi/chezmoi.toml`.
+Known operating systems select their package manager automatically during initialization. Unknown Linux distributions prompt for `apt`, `pacman`, or the safe `none` default.
+
+### Existing Linux Machines
+
+Machine data generated before desktop profiles were introduced must be migrated in `~/.config/chezmoi/chezmoi.toml` before package scripts can run:
+
+- set `[data.packages].manager` to `pacman` on Arch/CachyOS or `apt` on Debian/Ubuntu
+- add `desktopProfile = "hyprland"` or `desktopProfile = "none"` under `[data.machine]`
+- for Hyprland, add `arch-hyprland` to `[data.packages].groups` and keep `[data.features].hyprland = true`
+- on CachyOS with Noctalia, also add `cachyos-noctalia` and keep `[data.features].noctalia = true`
+- on generic Arch, set `[data.features].noctalia = false` and do not select `cachyos-noctalia`
+
+Inconsistent legacy profiles are ignored for Hyprland/Noctalia file application, and the package script rejects them with migration guidance. Pacman provisioning also requires `checkupdates` and `fakeroot`; install them with `sudo pacman -Syu pacman-contrib fakeroot` before the first package run if necessary.
 
 Run dependency installation explicitly with:
 

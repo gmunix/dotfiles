@@ -1,22 +1,46 @@
 {{- $role := promptChoiceOnce . "role" "Machine role" (list "desktop" "server") "desktop" -}}
 {{- $homebrewPrefix := "/opt/homebrew" -}}
 {{- $packageManager := "none" -}}
+{{- $desktopProfile := "none" -}}
+{{- $isArchLike := false -}}
+{{- $isDebianLike := false -}}
+{{- $isCachyOS := false -}}
 {{- if eq .chezmoi.arch "amd64" -}}
 {{- $homebrewPrefix = "/usr/local" -}}
 {{- end -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{- $osID := .chezmoi.osRelease.id | default "" -}}
+{{- $osIDLike := .chezmoi.osRelease.idLike | default "" -}}
+{{- $isCachyOS = eq $osID "cachyos" -}}
+{{- $isArchLike = or (eq $osID "arch") $isCachyOS (contains "arch" $osIDLike) -}}
+{{- $isDebianLike = or (eq $osID "debian") (eq $osID "ubuntu") (contains "debian" $osIDLike) (contains "ubuntu" $osIDLike) -}}
+{{- end -}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{- $packageManager = "brew" -}}
+{{- else if and (eq .chezmoi.os "linux") $isArchLike -}}
+{{- $packageManager = "pacman" -}}
+{{- else if and (eq .chezmoi.os "linux") $isDebianLike -}}
+{{- $packageManager = "apt" -}}
 {{- else if eq .chezmoi.os "linux" -}}
-{{- $packageManager = promptChoiceOnce . "packageManager" "Linux package manager" (list "apt" "pacman" "none") "apt" -}}
+{{- $packageManager = promptChoiceOnce . "packageManager" "Linux package manager" (list "apt" "pacman" "none") "none" -}}
 {{- end -}}
 {{- $isDesktop := eq $role "desktop" -}}
 {{- $isLinuxDesktop := and $isDesktop (eq .chezmoi.os "linux") -}}
-{{- $isPacmanDesktop := and $isLinuxDesktop (eq $packageManager "pacman") -}}
+{{- if and $isLinuxDesktop $isArchLike -}}
+{{- $defaultDesktopProfile := "none" -}}
+{{- if $isCachyOS -}}
+{{- $defaultDesktopProfile = "hyprland" -}}
+{{- end -}}
+{{- $desktopProfile = promptChoiceOnce . "desktopProfile" "Linux desktop profile" (list "hyprland" "none") $defaultDesktopProfile -}}
+{{- end -}}
+{{- $isHyprlandDesktop := and $isLinuxDesktop (eq $desktopProfile "hyprland") -}}
+{{- $isNoctaliaDesktop := and $isHyprlandDesktop $isCachyOS -}}
 sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data.machine]
 role = {{ $role | quote }}
 hostname = {{ .chezmoi.hostname | quote }}
+desktopProfile = {{ $desktopProfile | quote }}
 
 [data.packages]
 manager = {{ $packageManager | quote }}
@@ -29,6 +53,12 @@ groups = [
   "macos-desktop",
 {{- else if eq .chezmoi.os "linux" }}
   "linux-desktop",
+{{- if $isHyprlandDesktop }}
+  "arch-hyprland",
+{{- end }}
+{{- if $isNoctaliaDesktop }}
+  "cachyos-noctalia",
+{{- end }}
 {{- end }}
 {{- else if eq $role "server" }}
   "server",
@@ -42,9 +72,9 @@ aerospaceBin = {{ printf "%s/bin/aerospace" $homebrewPrefix | quote }}
 sketchybarBin = {{ printf "%s/bin/sketchybar" $homebrewPrefix | quote }}
 
 [data.features]
-hyprland = {{ $isPacmanDesktop }}
-noctalia = {{ $isPacmanDesktop }}
-ddcutil = {{ $isPacmanDesktop }}
+hyprland = {{ $isHyprlandDesktop }}
+noctalia = {{ $isNoctaliaDesktop }}
+ddcutil = {{ $isHyprlandDesktop }}
 spicetify = false
 sunshine = false
 starship = true

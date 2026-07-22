@@ -34,10 +34,12 @@ package_catalog:
         - chezmoi
         - curl
         - fd
+        - fakeroot
         - fzf
         - git
         - jq
         - neovim
+        - pacman-contrib
         - ripgrep
         - starship
         - tmux
@@ -109,36 +111,43 @@ package_catalog:
         - brightnessctl
         - cava
         - ddcutil
-        - hyprlock
-        - hyprland
-        - hyprpaper
-        - hyprpicker
-        - hyprshot
         - obs-studio
         - playerctl
         - rofi
-        - sway-notification-center
-        - waybar
         - wireplumber
       pacman:
-        - bluetui
         - brightnessctl
         - cava
         - ddcutil
+        - obs-studio
+        - playerctl
+        - rofi
+        - wireplumber
+    arch-hyprland:
+      brew:
+        taps: []
+        brews: []
+        casks: []
+      apt: []
+      pacman:
+        - bluetui
         - hyprlock
         - hyprland
         - hyprpaper
         - hyprpicker
         - hyprshot
         - impala
-        - noctalia
-        - obs-studio
-        - playerctl
-        - rofi
         - swaync
         - waybar
         - wiremix
-        - wireplumber
+    cachyos-noctalia:
+      brew:
+        taps: []
+        brews: []
+        casks: []
+      apt: []
+      pacman:
+        - noctalia
     server:
       brew:
         taps: []

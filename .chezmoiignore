@@ -1,11 +1,19 @@
 # Source-only files.
 README.md
 .gitignore
+tests
 
 {{- $isDesktop := eq .machine.role "desktop" -}}
 {{- $isLinuxDesktop := and $isDesktop (eq .chezmoi.os "linux") -}}
-{{- $hyprland := .features.hyprland | default false -}}
-{{- $noctalia := .features.noctalia | default false -}}
+{{- $isCachyOS := false -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{- $isCachyOS = eq (.chezmoi.osRelease.id | default "") "cachyos" -}}
+{{- end -}}
+{{- $desktopProfile := index .machine "desktopProfile" | default "none" -}}
+{{- $hyprlandEnabled := .features.hyprland | default false -}}
+{{- $noctaliaEnabled := .features.noctalia | default false -}}
+{{- $hyprland := and $hyprlandEnabled (eq $desktopProfile "hyprland") (has "arch-hyprland" .packages.groups) -}}
+{{- $noctalia := and $hyprland $isCachyOS $noctaliaEnabled (has "cachyos-noctalia" .packages.groups) -}}
 {{- $spicetify := .features.spicetify | default false -}}
 
 {{- if not $isDesktop }}
