@@ -100,6 +100,14 @@ Role controls how much of the setup is applied:
 
 Neovim's `lua/local/profile.lua` is generated per host from `[data.features.nvim]` in `~/.config/chezmoi/chezmoi.toml`. The default desktop profile enables optional UI/workflow plugins like Obsidian, Dadbod, REST, Windsurf, undo-glow, and Milli. The default server profile disables those heavier optional plugins while keeping core Neovim and Neogit enabled.
 
+## Appearance
+
+Ghostty reads its font family, font size, and theme from `[data.appearance.ghostty]`. Portable profiles use the built-in `Gruvbox Dark Hard` theme, while the CachyOS Noctalia profile selects the generated `noctalia` theme. Until that custom theme file exists, the rendered config safely uses Gruvbox; run `chezmoi apply ~/.config/ghostty/config` after Noctalia generates it.
+
+Neovim reads its theme from `[data.appearance.nvim]`. The `noctalia` profile loads Matugen colors through `base16-nvim` when the generated module is available and falls back to Monokai otherwise. Other profiles use Monokai directly.
+
+Noctalia owns the dynamic files `~/.config/ghostty/themes/noctalia` and `~/.config/nvim/lua/matugen.lua`; chezmoi intentionally does not manage them.
+
 ## Packages
 
 Package declarations live in `.chezmoidata/package_catalog.yaml`.

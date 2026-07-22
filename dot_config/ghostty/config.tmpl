@@ -1,0 +1,41 @@
+{{- $appearance := index . "appearance" | default dict -}}
+{{- $ghostty := index $appearance "ghostty" | default dict -}}
+{{- $fontFamily := index $ghostty "fontFamily" | default "JetBrainsMono Nerd Font" -}}
+{{- $fontSize := index $ghostty "fontSize" | default 11 -}}
+{{- $theme := index $ghostty "theme" | default "Gruvbox Dark Hard" -}}
+{{- if and (eq $theme "noctalia") (not (stat (joinPath .chezmoi.homeDir ".config/ghostty/themes/noctalia"))) -}}
+{{- $theme = "Gruvbox Dark Hard" -}}
+{{- end -}}
+# Theme
+theme = {{ $theme | quote }}
+
+background-opacity = 0.99
+background-blur = true
+
+# Font
+font-family = {{ $fontFamily | quote }}
+font-style = Regular
+font-size = {{ $fontSize }}
+
+# Window
+{{ if eq .chezmoi.os "darwin" -}}
+macos-titlebar-style = "hidden"
+{{ end -}}
+window-padding-x = 14
+window-padding-y = 14
+confirm-close-surface=false
+resize-overlay = never
+
+# Cursor stlying
+cursor-style = "block"
+cursor-style-blink = false
+shell-integration-features = no-cursor
+
+# Slowdown mouse scrolling
+# mouse-scroll-multiplier = 0.95
+
+# Shaders
+# custom-shader = shaders/cursor_blaze_tapered.glsl
+# custom-shader = shaders/cursor_smear.glsl
+# custom-shader = shaders/shake.glsl
+# custom-shader = shaders/sparks.glsl

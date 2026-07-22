@@ -93,10 +93,10 @@ milliLoop = {{ eq $role "desktop" }}
 [data.appearance.ghostty]
 fontFamily = "JetBrainsMono Nerd Font"
 fontSize = {{ if eq .chezmoi.os "darwin" }}14{{ else }}11{{ end }}
-theme = "Gruvbox Dark Hard"
+theme = {{ if $isNoctaliaDesktop }}"noctalia"{{ else }}"Gruvbox Dark Hard"{{ end }}
 
 [data.appearance.nvim]
-theme = "monokai"
+theme = {{ if $isNoctaliaDesktop }}"noctalia"{{ else }}"monokai"{{ end }}
 
 [data.appearance.tmux]
 theme = "gruvbox"

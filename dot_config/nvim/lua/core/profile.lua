@@ -1,6 +1,7 @@
 local M = {}
 
 local defaults = {
+	theme = "monokai",
 	obsidian = false,
 	dadbod = false,
 	rest = false,

@@ -1,16 +1,21 @@
-{{- $splash := .features.nvim.milliSplash | default (list "shader" "lights" "ididnot") -}}
+{{- $appearance := index . "appearance" | default dict -}}
+{{- $nvimAppearance := index $appearance "nvim" | default dict -}}
+{{- $features := index . "features" | default dict -}}
+{{- $nvimFeatures := index $features "nvim" | default dict -}}
+{{- $splash := index $nvimFeatures "milliSplash" | default (list "shader" "lights" "ididnot") -}}
 return {
-	obsidian = {{ .features.nvim.obsidian | default false }},
-	dadbod = {{ .features.nvim.dadbod | default false }},
-	rest = {{ .features.nvim.rest | default false }},
-	neogit = {{ .features.nvim.neogit | default true }},
-	windsurf = {{ .features.nvim.windsurf | default false }},
-	undo_glow = {{ .features.nvim.undoGlow | default false }},
-	milli = {{ .features.nvim.milli | default false }},
+	theme = {{ index $nvimAppearance "theme" | default "monokai" | quote }},
+	obsidian = {{ index $nvimFeatures "obsidian" | default false }},
+	dadbod = {{ index $nvimFeatures "dadbod" | default false }},
+	rest = {{ index $nvimFeatures "rest" | default false }},
+	neogit = {{ index $nvimFeatures "neogit" | default true }},
+	windsurf = {{ index $nvimFeatures "windsurf" | default false }},
+	undo_glow = {{ index $nvimFeatures "undoGlow" | default false }},
+	milli = {{ index $nvimFeatures "milli" | default false }},
 	milli_splash = {
 {{- range $splash }}
 		{{ . | quote }},
 {{- end }}
 	},
-	milli_loop = {{ .features.nvim.milliLoop | default false }},
+	milli_loop = {{ index $nvimFeatures "milliLoop" | default false }},
 }
