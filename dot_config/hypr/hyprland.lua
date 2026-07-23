@@ -11,4 +11,7 @@ require("modules.keybinds").setup(apps)
 require("modules.rules")
 
 -- For Noctalia Color templates
-require("noctalia").apply_theme()
+local loaded, noctalia = pcall(require, "noctalia")
+if loaded and type(noctalia) == "table" and type(noctalia.apply_theme) == "function" then
+	pcall(noctalia.apply_theme)
+end

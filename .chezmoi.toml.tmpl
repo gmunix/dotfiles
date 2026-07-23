@@ -26,15 +26,11 @@
 {{- end -}}
 {{- $isDesktop := eq $role "desktop" -}}
 {{- $isLinuxDesktop := and $isDesktop (eq .chezmoi.os "linux") -}}
-{{- if and $isLinuxDesktop $isArchLike -}}
-{{- $defaultDesktopProfile := "none" -}}
-{{- if $isCachyOS -}}
-{{- $defaultDesktopProfile = "hyprland" -}}
+{{- if and $isLinuxDesktop $isCachyOS -}}
+{{- $desktopProfile = promptChoiceOnce . "desktopProfile" "Linux desktop profile" (list "hyprland" "none") "hyprland" -}}
 {{- end -}}
-{{- $desktopProfile = promptChoiceOnce . "desktopProfile" "Linux desktop profile" (list "hyprland" "none") $defaultDesktopProfile -}}
-{{- end -}}
-{{- $isHyprlandDesktop := and $isLinuxDesktop (eq $desktopProfile "hyprland") -}}
-{{- $isNoctaliaDesktop := and $isHyprlandDesktop $isCachyOS -}}
+{{- $isHyprlandDesktop := and $isLinuxDesktop $isCachyOS (eq $desktopProfile "hyprland") -}}
+{{- $isNoctaliaDesktop := $isHyprlandDesktop -}}
 sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data.machine]

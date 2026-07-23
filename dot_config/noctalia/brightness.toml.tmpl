@@ -1,0 +1,3 @@
+{{- $features := index . "features" | default dict -}}
+[brightness]
+enable_ddcutil = {{ index $features "ddcutil" | default false }}

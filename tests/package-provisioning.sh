@@ -6,6 +6,8 @@ config_template="$repo_root/.chezmoi.toml.tmpl"
 installer_template="$repo_root/.chezmoiscripts/run_onchange_10-install-packages.sh.tmpl"
 tmp_dir=$(mktemp -d)
 trap 'rm -rf "$tmp_dir"' EXIT
+fixture_config="$tmp_dir/chezmoi.toml"
+printf 'sourceDir = "%s"\n' "$repo_root" >"$fixture_config"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -15,13 +17,13 @@ fail() {
 render_config() {
   local data=$1
   local destination=$2
-  chezmoi execute-template --init --override-data "$data" -f "$config_template" >"$destination"
+  chezmoi --config "$fixture_config" execute-template --init --override-data "$data" -f "$config_template" >"$destination"
 }
 
 render_installer() {
   local data=$1
   local destination=$2
-  chezmoi execute-template --override-data "$data" -f "$installer_template" >"$destination"
+  chezmoi --config "$fixture_config" execute-template --override-data "$data" -f "$installer_template" >"$destination"
   bash -n "$destination"
 }
 
@@ -61,9 +63,10 @@ assert "cachyos-noctalia" not in arch_none["packages"]["groups"]
 assert arch_none["features"]["hyprland"] is False
 
 arch_hyprland = load("arch-hyprland.toml")
-assert "arch-hyprland" in arch_hyprland["packages"]["groups"]
+assert arch_hyprland["machine"]["desktopProfile"] == "none"
+assert "arch-hyprland" not in arch_hyprland["packages"]["groups"]
 assert "cachyos-noctalia" not in arch_hyprland["packages"]["groups"]
-assert arch_hyprland["features"]["hyprland"] is True
+assert arch_hyprland["features"]["hyprland"] is False
 assert arch_hyprland["features"]["noctalia"] is False
 
 debian = load("debian.toml")
@@ -148,7 +151,7 @@ exec "$@"
 MOCK_SUDO
 chmod +x "$mock_bin/pacman" "$mock_bin/pacman-conf" "$mock_bin/checkupdates" "$mock_bin/fakeroot" "$mock_bin/sudo"
 
-installer_data='{"packages":{"manager":"pacman","groups":["arch-hyprland"]},"machine":{"desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":false}}'
+installer_data='{"chezmoi":{"os":"linux","osRelease":{"id":"cachyos","idLike":"arch"}},"packages":{"manager":"pacman","groups":["arch-hyprland","cachyos-noctalia"]},"machine":{"desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":true}}'
 render_installer "$installer_data" "$tmp_dir/install-packages.sh"
 
 run_installer() {
@@ -216,7 +219,7 @@ render_installer "$noctalia_mismatch_data" "$tmp_dir/noctalia-mismatch-install.s
 if noctalia_output=$(PATH="$mock_bin:$PATH" COMMAND_LOG="$command_log" PACMAN_LIVE_DB="$live_db" PACMAN_SCENARIO=installed bash "$tmp_dir/noctalia-mismatch-install.sh" 2>&1); then
   fail "An inverse Noctalia group mismatch did not fail"
 fi
-[[ $noctalia_output == *"[data.features].noctalia and the cachyos-noctalia"* ]] || fail "Noctalia mismatch guidance was not emitted"
+[[ $noctalia_output == *"[data.features].hyprland and [data.features].noctalia"* ]] || fail "Hyprland/Noctalia invariant guidance was not emitted"
 
 generic_arch_noctalia_data='{"chezmoi":{"os":"linux","osRelease":{"id":"arch","idLike":""}},"packages":{"manager":"pacman","groups":["arch-hyprland","cachyos-noctalia"]},"machine":{"desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":true}}'
 render_installer "$generic_arch_noctalia_data" "$tmp_dir/generic-arch-noctalia-install.sh"
@@ -226,17 +229,32 @@ fi
 [[ $generic_arch_output == *"supported only on CachyOS"* ]] || fail "Generic Arch Noctalia guidance was not emitted"
 
 legacy_data='{"chezmoi":{"os":"linux","osRelease":{"id":"arch","idLike":""}},"packages":{"manager":"pacman","groups":["linux-desktop"]},"machine":{"desktopProfile":"none"},"features":{"hyprland":true,"noctalia":true}}'
-legacy_ignore=$(chezmoi execute-template --override-data "$legacy_data" -f "$repo_root/.chezmoiignore")
+legacy_ignore=$(chezmoi --config "$fixture_config" execute-template --override-data "$legacy_data" -f "$repo_root/.chezmoiignore")
 [[ $legacy_ignore == *".config/hypr"* ]] || fail "Legacy Hyprland config was not ignored"
 [[ $legacy_ignore == *".config/noctalia"* ]] || fail "Legacy Noctalia config was not ignored"
 
-valid_ignore_data='{"chezmoi":{"os":"linux","osRelease":{"id":"arch","idLike":""}},"packages":{"manager":"pacman","groups":["arch-hyprland"]},"machine":{"role":"desktop","desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":false}}'
-valid_ignore=$(chezmoi execute-template --override-data "$valid_ignore_data" -f "$repo_root/.chezmoiignore")
-[[ $valid_ignore != *".config/hypr"* ]] || fail "A valid generic Arch Hyprland profile was ignored"
-[[ $valid_ignore == *".config/noctalia"* ]] || fail "Unsupported generic Arch Noctalia config was not ignored"
+valid_ignore_data='{"chezmoi":{"os":"linux","osRelease":{"id":"cachyos","idLike":"arch"}},"packages":{"manager":"pacman","groups":["arch-hyprland","cachyos-noctalia"]},"machine":{"role":"desktop","desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":true}}'
+valid_ignore=$(chezmoi --config "$fixture_config" execute-template --override-data "$valid_ignore_data" -f "$repo_root/.chezmoiignore")
+[[ $valid_ignore != *".config/hypr"* ]] || fail "A valid CachyOS Hyprland profile was ignored"
+[[ $valid_ignore != *".config/noctalia"* ]] || fail "A valid CachyOS Noctalia profile was ignored"
 
-managed_files=$(chezmoi managed)
+partial_features_data='{"chezmoi":{"os":"linux","osRelease":{"id":"cachyos","idLike":"arch"}},"packages":{"groups":["arch-hyprland","cachyos-noctalia"]},"machine":{"role":"desktop","desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":false}}'
+partial_features_ignore=$(chezmoi --config "$fixture_config" execute-template --override-data "$partial_features_data" -f "$repo_root/.chezmoiignore")
+[[ $partial_features_ignore == *".config/hypr"* ]] || fail "Partial CachyOS features did not ignore Hyprland"
+[[ $partial_features_ignore == *".config/noctalia"* ]] || fail "Partial CachyOS features did not ignore Noctalia"
+
+partial_groups_data='{"chezmoi":{"os":"linux","osRelease":{"id":"cachyos","idLike":"arch"}},"packages":{"groups":["arch-hyprland"]},"machine":{"role":"desktop","desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":true}}'
+partial_groups_ignore=$(chezmoi --config "$fixture_config" execute-template --override-data "$partial_groups_data" -f "$repo_root/.chezmoiignore")
+[[ $partial_groups_ignore == *".config/hypr"* ]] || fail "Partial CachyOS groups did not ignore Hyprland"
+[[ $partial_groups_ignore == *".config/noctalia"* ]] || fail "Partial CachyOS groups did not ignore Noctalia"
+
+managed_files=$(chezmoi --config "$fixture_config" managed)
 [[ $managed_files != *"tests/package-provisioning.sh"* ]] || fail "Source-only tests are managed as home files"
+
+chezmoi --config "$fixture_config" execute-template -f "$repo_root/.chezmoiignore" >"$tmp_dir/empty-profile.ignore"
+[[ $(<"$tmp_dir/empty-profile.ignore") == *".config/hypr"* ]] || fail "Missing machine data did not fail closed"
+chezmoi --config "$fixture_config" execute-template -f "$installer_template" >"$tmp_dir/empty-profile-installer.sh"
+[[ ! -s $tmp_dir/empty-profile-installer.sh ]] || fail "Missing package data rendered an installer"
 
 if grep -Eq 'sudo pacman -Sy([[:space:]]|$)' "$installer_template"; then
   fail "Installer template contains unsafe pacman -Sy"

@@ -1,8 +1,11 @@
-{{- $manager := .packages.manager | default "none" -}}
-{{- $selectedGroups := .packages.groups | default (list "base" "nvim") -}}
-{{- $desktopProfile := index .machine "desktopProfile" | default "none" -}}
-{{- $hyprlandEnabled := index .features "hyprland" | default false -}}
-{{- $noctaliaEnabled := index .features "noctalia" | default false -}}
+{{- $packages := index . "packages" | default dict -}}
+{{- $machine := index . "machine" | default dict -}}
+{{- $features := index . "features" | default dict -}}
+{{- $manager := index $packages "manager" | default "none" -}}
+{{- $selectedGroups := index $packages "groups" | default (list "base" "nvim") -}}
+{{- $desktopProfile := index $machine "desktopProfile" | default "none" -}}
+{{- $hyprlandEnabled := index $features "hyprland" | default false -}}
+{{- $noctaliaEnabled := index $features "noctalia" | default false -}}
 {{- $hasArchHyprlandGroup := has "arch-hyprland" $selectedGroups -}}
 {{- $hasCachyOSNoctaliaGroup := has "cachyos-noctalia" $selectedGroups -}}
 {{- $isCachyOS := false -}}
@@ -109,6 +112,10 @@ exit 1
 printf 'Noctalia requires the Hyprland desktop profile. Migrate the local chezmoi config before retrying.\n' >&2
 exit 1
 {{- end }}
+{{- if ne $hyprlandEnabled $noctaliaEnabled }}
+printf '[data.features].hyprland and [data.features].noctalia must either both be enabled or both be disabled. Migrate the local chezmoi config before retrying.\n' >&2
+exit 1
+{{- end }}
 {{- if and (or $noctaliaEnabled $hasCachyOSNoctaliaGroup) (not $isCachyOS) }}
 printf 'The cachyos-noctalia profile is supported only on CachyOS. Disable it on this machine before retrying.\n' >&2
 exit 1
@@ -209,4 +216,4 @@ if ((${#pending[@]} > 0)); then
 
   sudo pacman -S --needed --noconfirm "${pending[@]}"
 fi
-{{- end }}
+{{- end -}}

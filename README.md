@@ -89,8 +89,8 @@ OS controls platform-specific files:
 
 - macOS desktop applies AeroSpace and SketchyBar
 - Debian/Ubuntu-style Linux desktops use the generic Linux desktop package group
-- Arch-style Linux desktops can select an explicit `hyprland` profile; generic Arch defaults to `none`
-- CachyOS desktops default to the `hyprland` profile and add the CachyOS-packaged Noctalia shell when that default is accepted
+- generic Arch desktops use the shared Linux desktop profile without managed Hyprland
+- CachyOS desktops default to the inseparable Hyprland and Noctalia profile when that default is accepted
 - non-matching OS files are ignored through `.chezmoiignore`
 
 Role controls how much of the setup is applied:
@@ -106,7 +106,7 @@ Ghostty reads its font family, font size, and theme from `[data.appearance.ghost
 
 Neovim reads its theme from `[data.appearance.nvim]`. The `noctalia` profile loads Matugen colors through `base16-nvim` when the generated module is available and falls back to Monokai otherwise. Other profiles use Monokai directly.
 
-Noctalia owns the dynamic files `~/.config/ghostty/themes/noctalia` and `~/.config/nvim/lua/matugen.lua`; chezmoi intentionally does not manage them.
+Noctalia owns the dynamic files `~/.config/ghostty/themes/noctalia`, `~/.config/nvim/lua/matugen.lua`, and `~/.config/hypr/noctalia.lua`; chezmoi intentionally does not manage them. Hyprland safely keeps its static appearance until the generated color module is available.
 
 Tmux reads its theme, plugin toggle, and GitHub status toggle from `[data.appearance.tmux]`. Desktop profiles enable pinned plugins loaded by TPM, while server and legacy profiles safely render the core configuration without plugins. The Gruvbox GitHub widget uses authenticated `gh` requests when available and otherwise falls back to the rate-limited public API.
 
@@ -131,11 +131,11 @@ Machine data generated before desktop profiles were introduced must be migrated 
 
 - set `[data.packages].manager` to `pacman` on Arch/CachyOS or `apt` on Debian/Ubuntu
 - add `desktopProfile = "hyprland"` or `desktopProfile = "none"` under `[data.machine]`
-- for Hyprland, add `arch-hyprland` to `[data.packages].groups` and keep `[data.features].hyprland = true`
-- on CachyOS with Noctalia, also add `cachyos-noctalia` and keep `[data.features].noctalia = true`
-- on generic Arch, set `[data.features].noctalia = false` and do not select `cachyos-noctalia`
+- for the CachyOS Hyprland profile, select both `arch-hyprland` and `cachyos-noctalia` and enable both `[data.features].hyprland` and `[data.features].noctalia`
+- on generic Arch, use `desktopProfile = "none"`, disable both Hyprland and Noctalia features, and do not select either package group
+- set `[data.features].sunshine` and `[data.features].ddcutil` explicitly; missing values safely default to disabled
 
-Inconsistent legacy profiles are ignored for Hyprland/Noctalia file application, and the package script rejects them with migration guidance. Pacman provisioning also requires `checkupdates` and `fakeroot`; install them with `sudo pacman -Syu pacman-contrib fakeroot` before the first package run if necessary.
+Hyprland and Noctalia cannot be enabled independently. Inconsistent legacy profiles are ignored for file application, and the package script rejects them with migration guidance. Sunshine autostart and Noctalia DDC brightness support follow their respective feature flags. Pacman provisioning also requires `checkupdates` and `fakeroot`; install them with `sudo pacman -Syu pacman-contrib fakeroot` before the first package run if necessary.
 
 Run dependency installation explicitly with:
 

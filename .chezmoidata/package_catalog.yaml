@@ -137,8 +137,6 @@ package_catalog:
         - hyprpicker
         - hyprshot
         - impala
-        - swaync
-        - waybar
         - wiremix
     cachyos-noctalia:
       brew:
