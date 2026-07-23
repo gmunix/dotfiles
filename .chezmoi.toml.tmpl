@@ -100,7 +100,7 @@ theme = {{ if $isNoctaliaDesktop }}"noctalia"{{ else }}"monokai"{{ end }}
 
 [data.appearance.tmux]
 theme = "gruvbox"
-plugins = {{ $isDesktop }}
+plugins = {{ and $isDesktop (ne $packageManager "none") }}
 githubStatus = false
 
 [data.linux]

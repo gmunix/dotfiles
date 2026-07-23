@@ -108,6 +108,10 @@ Neovim reads its theme from `[data.appearance.nvim]`. The `noctalia` profile loa
 
 Noctalia owns the dynamic files `~/.config/ghostty/themes/noctalia` and `~/.config/nvim/lua/matugen.lua`; chezmoi intentionally does not manage them.
 
+Tmux reads its theme, plugin toggle, and GitHub status toggle from `[data.appearance.tmux]`. Desktop profiles enable pinned plugins loaded by TPM, while server and legacy profiles safely render the core configuration without plugins. The Gruvbox GitHub widget uses authenticated `gh` requests when available and otherwise falls back to the rate-limited public API.
+
+The after-apply tmux installer atomically clones missing plugins at the revisions pinned in `.chezmoidata/tmux_catalog.yaml`. It never updates existing plugin checkouts or requires sudo; a different existing revision fails with manual reconciliation guidance. Enabled plugin profiles require network access on their first apply. Restart the tmux server after switching to a plugin-disabled profile so previously loaded hooks and bindings are cleared.
+
 ## Packages
 
 Package declarations live in `.chezmoidata/package_catalog.yaml`.

@@ -1,0 +1,75 @@
+{{- $appearance := index . "appearance" | default dict -}}
+{{- $tmuxAppearance := index $appearance "tmux" | default dict -}}
+{{- $pluginsEnabled := index $tmuxAppearance "plugins" | default false -}}
+{{- $theme := index $tmuxAppearance "theme" | default "gruvbox" -}}
+{{- $githubStatus := index $tmuxAppearance "githubStatus" | default false -}}
+{{- $catalog := index . "tmux_catalog" | default dict -}}
+{{- $corePlugins := index $catalog "corePlugins" | default list -}}
+{{- $themePlugins := index $catalog "themePlugins" | default dict -}}
+{{- $themePlugin := index $themePlugins $theme | default dict -}}
+{{- if or (not (index $themePlugin "name")) (not (index $themePlugin "url")) (not (index $themePlugin "revision")) -}}
+{{- fail (printf "unsupported tmux theme %q" $theme) -}}
+{{- end -}}
+{{- range $plugin := $corePlugins -}}
+{{- if or (not $plugin.name) (not $plugin.url) (not $plugin.revision) -}}
+{{- fail "invalid core tmux plugin catalog entry" -}}
+{{- end -}}
+{{- end -}}
+# Set reload binding
+unbind r
+bind r source-file ~/.tmux.conf
+
+unbind s
+
+# Set leader keymap
+set -g prefix C-s
+
+# Enable mouse control
+set -g mouse on
+
+# Set navigation bindings
+bind-key h select-pane -L
+bind-key j select-pane -D
+bind-key k select-pane -U
+bind-key l select-pane -R
+
+{{ if $pluginsEnabled -}}
+# Plugins
+set-environment -g TMUX_PLUGIN_MANAGER_PATH {{ joinPath .chezmoi.homeDir ".tmux/plugins" | quote }}
+{{- range $plugin := $corePlugins }}
+set -g @plugin {{ $plugin.name | quote }}
+{{- end }}
+set -g @sessionx-bind 's'
+set -g @floax-change-path 'false'
+set -g @floax-session-name 'floax'
+set -g @plugin {{ $themePlugin.name | quote }}
+{{- if eq $theme "gruvbox" }}
+set -g @gruvbox-tmux_theme dark
+set -g @gruvbox-tmux_github_status {{ if $githubStatus }}on{{ else }}off{{ end }}
+{{- end }}
+{{- if eq .chezmoi.os "darwin" }}
+if-shell '[ -x /opt/homebrew/opt/bash/bin/bash ] && ! printf %s ":$PATH:" | grep -Fq ":/opt/homebrew/opt/bash/bin:"' 'set-environment -gF PATH "/opt/homebrew/opt/bash/bin:#{PATH}"'
+if-shell '[ ! -x /opt/homebrew/opt/bash/bin/bash ] && [ -x /usr/local/opt/bash/bin/bash ] && ! printf %s ":$PATH:" | grep -Fq ":/usr/local/opt/bash/bin:"' 'set-environment -gF PATH "/usr/local/opt/bash/bin:#{PATH}"'
+{{- end }}
+{{- end }}
+
+# Start window and pane numbering at 1
+set -g base-index 1
+
+# Set the status position to top
+set-option -g status-position top
+
+# Use vi key-mode for selection
+set -g mode-keys vi
+
+# 24-bit colors end-to-end
+set -g default-terminal "tmux-256color"
+set -as terminal-features "tmux-256color:RGB,alacritty:RGB,xterm-256color:RGB"
+
+# keep COLORTERM for apps like btop
+set -ga update-environment ",COLORTERM"
+
+{{ if $pluginsEnabled -}}
+# Initialize TPM last when it is available.
+run-shell 'if [ -x "$TMUX_PLUGIN_MANAGER_PATH/tpm/tpm" ]; then "$TMUX_PLUGIN_MANAGER_PATH/tpm/tpm"; fi'
+{{- end }}
