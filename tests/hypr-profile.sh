@@ -38,6 +38,7 @@ chezmoi --config "$empty_config" execute-template -f "$brightness_template" >"$t
 [[ $(<"$tmp_dir/brightness-legacy.toml") == *'enable_ddcutil = false'* ]] || fail "Legacy profile did not default DDC off"
 
 luac -p "$hyprland_config"
+[[ $(<"$hyprland_config") == *'require("noctalia")'* ]] || fail "Hyprland config omitted Noctalia's hook detection marker"
 HYPRLAND_CONFIG="$hyprland_config" lua <<'LUA'
 local modules = {
   "modules.monitors",
@@ -78,6 +79,24 @@ package.preload["noctalia"] = function()
 end
 dofile(os.getenv("HYPRLAND_CONFIG"))
 LUA
+
+hyprland_hook=/usr/share/noctalia/assets/templates/hyprland/apply.sh
+if [[ -x $hyprland_hook ]]; then
+  hook_home="$tmp_dir/hook-home"
+  hook_bin="$tmp_dir/hook-bin"
+  mkdir -p "$hook_home/.config/hypr" "$hook_bin"
+  cp "$hyprland_config" "$hook_home/.config/hypr/hyprland.lua"
+  cp "$hyprland_config" "$tmp_dir/hyprland-before-hook.lua"
+  cat >"$hook_bin/hyprctl" <<'MOCK_HYPRCTL'
+#!/usr/bin/env bash
+exit 1
+MOCK_HYPRCTL
+  chmod +x "$hook_bin/hyprctl"
+  HOME="$hook_home" XDG_CONFIG_HOME="$hook_home/.config" PATH="$hook_bin:$PATH" "$hyprland_hook" apply
+  cmp -s "$tmp_dir/hyprland-before-hook.lua" "$hook_home/.config/hypr/hyprland.lua" || fail "Noctalia appended an unguarded Hyprland include"
+else
+  printf 'SKIP: Noctalia Hyprland hook compatibility (hook not installed).\n'
+fi
 
 arch_packages=$(chezmoi --config "$source_config" data --format=json | jq -r '.package_catalog.groups["arch-hyprland"].pacman[]')
 [[ $arch_packages != *'waybar'* ]] || fail "Unused Waybar package remains in the Hyprland profile"

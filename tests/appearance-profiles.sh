@@ -9,6 +9,8 @@ tmp_dir=$(mktemp -d)
 trap 'rm -rf "$tmp_dir"' EXIT
 empty_config="$tmp_dir/empty.toml"
 : >"$empty_config"
+source_config="$tmp_dir/source.toml"
+printf 'sourceDir = "%s"\n' "$repo_root" >"$source_config"
 
 fail() {
 	printf 'FAIL: %s\n' "$*" >&2
@@ -37,7 +39,7 @@ chezmoi --config "$empty_config" execute-template \
 chezmoi --config "$empty_config" execute-template -f "$ghostty_template" >"$tmp_dir/default-ghostty.conf"
 
 current_config=$(<"$current_ghostty")
-[[ $current_config == *'theme = "noctalia"'* ]] || fail "Current Ghostty theme was not rendered"
+[[ $current_config == *'theme = noctalia'* ]] || fail "Current Ghostty theme was not rendered in Noctalia's canonical form"
 [[ $current_config == *'font-family = "CaskaydiaMono Nerd Font"'* ]] || fail "Current Ghostty font was not rendered"
 [[ $current_config == *'font-size = 11'* ]] || fail "Current Ghostty font size was not rendered"
 [[ $current_config != *'macos-titlebar-style'* ]] || fail "macOS titlebar setting was rendered on Linux"
@@ -56,6 +58,27 @@ if command -v ghostty >/dev/null 2>&1; then
 	XDG_CONFIG_HOME="$noctalia_home/.config" ghostty +validate-config --config-file="$current_ghostty"
 else
 	printf 'SKIP: Ghostty runtime validation (ghostty not installed).\n'
+fi
+
+ghostty_hook=/usr/share/noctalia/assets/templates/ghostty/apply.sh
+if [[ -x $ghostty_hook ]]; then
+	mock_bin="$tmp_dir/hook-bin"
+	mkdir "$mock_bin"
+	cat >"$mock_bin/pgrep" <<'MOCK_PGREP'
+#!/usr/bin/env bash
+exit 1
+MOCK_PGREP
+	cat >"$mock_bin/pkill" <<'MOCK_PKILL'
+#!/usr/bin/env bash
+exit 0
+MOCK_PKILL
+	chmod +x "$mock_bin/pgrep" "$mock_bin/pkill"
+	cp "$current_ghostty" "$noctalia_home/.config/ghostty/config"
+	cp "$current_ghostty" "$tmp_dir/ghostty-before-hook.conf"
+	XDG_CONFIG_HOME="$noctalia_home/.config" PATH="$mock_bin:$PATH" "$ghostty_hook"
+	cmp -s "$tmp_dir/ghostty-before-hook.conf" "$noctalia_home/.config/ghostty/config" || fail "Noctalia rewrote the managed Ghostty config"
+else
+	printf 'SKIP: Noctalia Ghostty hook compatibility (hook not installed).\n'
 fi
 
 chezmoi --config "$empty_config" execute-template --override-data '{"appearance":{"nvim":{"theme":"noctalia"}}}' -f "$nvim_profile_template" >"$tmp_dir/noctalia-profile.lua"
@@ -94,7 +117,7 @@ else
 	printf 'SKIP: Neovim runtime theme validation (nvim or locked theme plugins not installed).\n'
 fi
 
-managed_files=$(chezmoi managed)
+managed_files=$(chezmoi --config "$source_config" managed)
 [[ $managed_files != *'.config/ghostty/themes/noctalia'* ]] || fail "Generated Ghostty theme is managed by chezmoi"
 [[ $managed_files != *'.config/nvim/lua/matugen.lua'* ]] || fail "Generated Neovim theme is managed by chezmoi"
 
