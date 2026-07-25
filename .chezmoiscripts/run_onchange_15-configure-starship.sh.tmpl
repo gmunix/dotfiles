@@ -6,25 +6,25 @@ if ! command -v starship >/dev/null 2>&1; then
   exit 0
 fi
 
-starship config username.disabled true
-starship config hostname.disabled true
-
 config_file="${STARSHIP_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml}"
+mkdir -p "$(dirname "$config_file")"
+STARSHIP_CONFIG="$config_file" starship config username.disabled true
+STARSHIP_CONFIG="$config_file" starship config hostname.disabled true
+
 marker_begin="# >>> NOCTALIA STARSHIP PALETTE >>>"
 marker_end="# <<< NOCTALIA STARSHIP PALETTE <<<"
 
-if grep -qF "$marker_begin" "$config_file"; then
+if grep -qF "$marker_begin" "$config_file" && ! grep -qF "$marker_end" "$config_file"; then
   temp_file="$(mktemp "${config_file}.XXXXXX")"
   trap 'rm -f "$temp_file"' EXIT
   awk -v marker_begin="$marker_begin" -v marker_end="$marker_end" '
     $0 == marker_begin { inside_marker = 1 }
-    inside_marker && ($0 == "[username]" || $0 == "[hostname]") && !marker_closed {
+    inside_marker && ($0 == "[username]" || $0 == "[hostname]") {
       print marker_end
       inside_marker = 0
-      marker_closed = 1
     }
-    $0 == marker_end && marker_closed { next }
     { print }
+    END { if (inside_marker) print marker_end }
   ' "$config_file" > "$temp_file"
   cat "$temp_file" > "$config_file"
 fi

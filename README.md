@@ -48,6 +48,16 @@ Then initialize and apply this repo:
 ~/.local/bin/chezmoi init --apply <repo-url>
 ```
 
+On a fresh Arch or CachyOS machine, stage the first apply so Pacman can perform a safe full upgrade before the package installer checks repository freshness:
+
+```sh
+~/.local/bin/chezmoi init <repo-url>
+sudo pacman -Syu --needed pacman-contrib fakeroot
+~/.local/bin/chezmoi apply
+```
+
+The package script deliberately does not run the full system upgrade automatically.
+
 For private repos, use the SSH URL:
 
 ```sh
@@ -110,7 +120,7 @@ Noctalia owns the dynamic files `~/.config/ghostty/themes/noctalia`, `~/.config/
 
 Tmux reads its theme, plugin toggle, and GitHub status toggle from `[data.appearance.tmux]`. Desktop profiles enable pinned plugins loaded by TPM, while server and legacy profiles safely render the core configuration without plugins. The Gruvbox GitHub widget uses authenticated `gh` requests when available and otherwise falls back to the rate-limited public API.
 
-The after-apply tmux installer atomically clones missing plugins at the revisions pinned in `.chezmoidata/tmux_catalog.yaml`. It never updates existing plugin checkouts or requires sudo; a different existing revision fails with manual reconciliation guidance. Enabled plugin profiles require network access on their first apply. Restart the tmux server after switching to a plugin-disabled profile so previously loaded hooks and bindings are cleared.
+The after-apply tmux installer atomically clones missing plugins at the revisions pinned in `.chezmoidata/tmux_catalog.yaml`. It never updates existing plugin checkouts or requires sudo; a different revision or dirty worktree fails with manual reconciliation guidance. Enabled plugin profiles require network access on their first apply. Restart the tmux server after switching to a plugin-disabled profile so previously loaded hooks and bindings are cleared.
 
 ## Packages
 
@@ -135,7 +145,7 @@ Machine data generated before desktop profiles were introduced must be migrated 
 - on generic Arch, use `desktopProfile = "none"`, disable both Hyprland and Noctalia features, and do not select either package group
 - set `[data.features].sunshine` and `[data.features].ddcutil` explicitly; missing values safely default to disabled
 
-Hyprland and Noctalia cannot be enabled independently. Inconsistent legacy profiles are ignored for file application, and the package script rejects them with migration guidance. Sunshine autostart and Noctalia DDC brightness support follow their respective feature flags. Pacman provisioning also requires `checkupdates` and `fakeroot`; install them with `sudo pacman -Syu pacman-contrib fakeroot` before the first package run if necessary.
+Hyprland and Noctalia cannot be enabled independently. Inconsistent legacy profiles are ignored for file application, and the package script rejects them with migration guidance. Sunshine autostart and Noctalia DDC brightness support follow their respective feature flags. Pacman provisioning also requires `checkupdates` and `fakeroot`; install them with `sudo pacman -Syu --needed pacman-contrib fakeroot` before the first package run if necessary.
 
 Run dependency installation explicitly with:
 

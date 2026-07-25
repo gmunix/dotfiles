@@ -164,7 +164,7 @@ done
 
 if ((${#pending[@]} > 0)); then
   if ! command -v checkupdates >/dev/null 2>&1 || ! command -v fakeroot >/dev/null 2>&1; then
-    printf 'checkupdates and fakeroot are required for a safe Pacman freshness check. Run sudo pacman -Syu pacman-contrib fakeroot and retry.\n' >&2
+    printf 'Fresh Arch-based systems require a manual safe bootstrap before package provisioning. Run sudo pacman -Syu --needed pacman-contrib fakeroot and retry.\n' >&2
     exit 1
   fi
 

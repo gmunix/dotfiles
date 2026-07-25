@@ -154,6 +154,21 @@ chmod +x "$mock_bin/pacman" "$mock_bin/pacman-conf" "$mock_bin/checkupdates" "$m
 installer_data='{"chezmoi":{"os":"linux","osRelease":{"id":"cachyos","idLike":"arch"}},"packages":{"manager":"pacman","groups":["arch-hyprland","cachyos-noctalia"]},"machine":{"desktopProfile":"hyprland"},"features":{"hyprland":true,"noctalia":true}}'
 render_installer "$installer_data" "$tmp_dir/install-packages.sh"
 
+missing_prereq_bin="$tmp_dir/missing-prereq-bin"
+mkdir "$missing_prereq_bin"
+cat >"$missing_prereq_bin/pacman" <<'MOCK_PREREQ_PACMAN'
+#!/usr/bin/env bash
+case "${1:-}" in
+  -Q) exit 1 ;;
+  *) exit 64 ;;
+esac
+MOCK_PREREQ_PACMAN
+chmod +x "$missing_prereq_bin/pacman"
+if prereq_output=$(PATH="$missing_prereq_bin" /usr/bin/bash "$tmp_dir/install-packages.sh" 2>&1); then
+  fail "Missing Pacman bootstrap prerequisites did not block provisioning"
+fi
+[[ $prereq_output == *'sudo pacman -Syu --needed pacman-contrib fakeroot'* ]] || fail "Pacman bootstrap guidance was not emitted"
+
 run_installer() {
   local scenario=$1
   : >"$command_log"

@@ -151,6 +151,13 @@ if [[ ${1:-} == "-C" ]]; then
       [[ -f $directory/.revision ]] || exit 1
       cat "$directory/.revision"
       ;;
+    "status --porcelain")
+      if [[ -f $directory/.dirty-tracked ]]; then
+        printf ' M tracked-file\n'
+      elif [[ -f $directory/.dirty-untracked ]]; then
+        printf '?? untracked-file\n'
+      fi
+      ;;
     "checkout --detach")
       printf '%s\n' "$3" >"$directory/.revision"
       ;;
@@ -191,6 +198,20 @@ chmod +x "$plugin_root/tpm/tpm"
 : >"$git_log"
 GIT_LOG="$git_log" HOME="$tmp_dir/runtime-home" PATH="$mock_bin:$PATH" bash "$tmp_dir/install-enabled.sh"
 [[ $(<"$git_log") != *'clone '* ]] || fail "Pinned existing plugins were cloned again"
+
+touch "$plugin_root/tpm/.dirty-tracked"
+if dirty_tracked_output=$(GIT_LOG="$git_log" HOME="$tmp_dir/runtime-home" PATH="$mock_bin:$PATH" bash "$tmp_dir/install-enabled.sh" 2>&1); then
+  fail "Tracked tmux plugin modifications were accepted"
+fi
+[[ $dirty_tracked_output == *'has local modifications'* ]] || fail "Tracked modification guidance was not emitted"
+rm "$plugin_root/tpm/.dirty-tracked"
+
+touch "$plugin_root/tpm/.dirty-untracked"
+if dirty_untracked_output=$(GIT_LOG="$git_log" HOME="$tmp_dir/runtime-home" PATH="$mock_bin:$PATH" bash "$tmp_dir/install-enabled.sh" 2>&1); then
+  fail "Untracked tmux plugin additions were accepted"
+fi
+[[ $dirty_untracked_output == *'has local modifications'* ]] || fail "Untracked modification guidance was not emitted"
+rm "$plugin_root/tpm/.dirty-untracked"
 
 rm -rf "$plugin_root"
 mkdir -p "$plugin_root/tpm"

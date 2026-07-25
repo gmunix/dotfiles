@@ -1,5 +1,7 @@
-{{- $spicetify := .features.spicetify | default false -}}
-{{- if and (eq .chezmoi.os "linux") (eq .machine.role "desktop") $spicetify -}}
+{{- $features := index . "features" | default dict -}}
+{{- $machine := index . "machine" | default dict -}}
+{{- $spicetify := index $features "spicetify" | default false -}}
+{{- if and (eq .chezmoi.os "linux") (eq (index $machine "role" | default "server") "desktop") $spicetify -}}
 #!/usr/bin/env bash
 set -euo pipefail
 
