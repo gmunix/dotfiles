@@ -1,0 +1,95 @@
+{{- $appearance := index . "appearance" | default dict -}}
+{{- $tmuxAppearance := index $appearance "tmux" | default dict -}}
+{{- $pluginsEnabled := index $tmuxAppearance "plugins" | default false -}}
+{{- $theme := index $tmuxAppearance "theme" | default "gruvbox" -}}
+{{- $catalog := index . "tmux_catalog" | default dict -}}
+{{- $corePlugins := index $catalog "corePlugins" | default list -}}
+{{- $themePlugins := index $catalog "themePlugins" | default dict -}}
+{{- $themePlugin := index $themePlugins $theme | default dict -}}
+{{- if or (not (index $themePlugin "name")) (not (index $themePlugin "url")) (not (index $themePlugin "revision")) -}}
+{{- fail (printf "unsupported tmux theme %q" $theme) -}}
+{{- end -}}
+{{- range $plugin := $corePlugins -}}
+{{- if or (not $plugin.name) (not $plugin.url) (not $plugin.revision) -}}
+{{- fail "invalid core tmux plugin catalog entry" -}}
+{{- end -}}
+{{- end -}}
+{{- if $pluginsEnabled -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Selected plugins are embedded so catalog changes retrigger this script.
+{{- range $plugin := $corePlugins }}
+# plugin: {{ $plugin.name }}@{{ $plugin.revision }}
+{{- end }}
+# plugin: {{ $themePlugin.name }}@{{ $themePlugin.revision }}
+
+if ! command -v git >/dev/null 2>&1 || ! command -v tmux >/dev/null 2>&1; then
+  printf 'Git and tmux are required to install tmux plugins. Install declared base packages and retry.\n' >&2
+  exit 1
+fi
+
+plugin_root={{ joinPath .chezmoi.homeDir ".tmux/plugins" | quote }}
+tpm_dir="$plugin_root/tpm"
+
+install_plugin() {
+  local name=$1
+  local url=$2
+  local revision=$3
+  local directory=${name##*/}
+  local destination="$plugin_root/$directory"
+  local installed_revision
+  local temporary_root
+  local worktree_status
+
+  if [[ -e "$destination" ]]; then
+    if ! installed_revision=$(git -C "$destination" rev-parse HEAD 2>/dev/null); then
+      printf 'The tmux plugin path is not a Git checkout: %s\n' "$destination" >&2
+      exit 1
+    fi
+    worktree_status=$(git -C "$destination" status --porcelain --untracked-files=all)
+    if [[ -n "$worktree_status" ]]; then
+      printf 'Tmux plugin %s has local modifications. Restore a clean checkout and retry.\n' "$name" >&2
+      exit 1
+    fi
+    if [[ "$installed_revision" != "$revision" ]]; then
+      printf 'Tmux plugin %s is at %s, expected %s. Reconcile it manually and retry.\n' "$name" "$installed_revision" "$revision" >&2
+      exit 1
+    fi
+    return
+  fi
+
+  mkdir -p "$plugin_root"
+  temporary_root=$(mktemp -d "$plugin_root/.${directory}.XXXXXX")
+  if ! git clone --filter=blob:none --no-checkout "$url" "$temporary_root/repository" \
+    || ! git -C "$temporary_root/repository" checkout --detach "$revision"; then
+    rm -rf "$temporary_root"
+    printf 'Failed to install pinned tmux plugin %s. Check network access and retry.\n' "$name" >&2
+    exit 1
+  fi
+  installed_revision=$(git -C "$temporary_root/repository" rev-parse HEAD)
+  worktree_status=$(git -C "$temporary_root/repository" status --porcelain --untracked-files=all)
+  if [[ "$installed_revision" != "$revision" ]]; then
+    rm -rf "$temporary_root"
+    printf 'Tmux plugin %s resolved to %s, expected %s.\n' "$name" "$installed_revision" "$revision" >&2
+    exit 1
+  fi
+  if [[ -n "$worktree_status" ]]; then
+    rm -rf "$temporary_root"
+    printf 'Fresh tmux plugin %s checkout is not clean.\n' "$name" >&2
+    exit 1
+  fi
+  mv "$temporary_root/repository" "$destination"
+  rmdir "$temporary_root"
+}
+
+{{- range $plugin := $corePlugins }}
+install_plugin {{ $plugin.name | quote }} {{ $plugin.url | quote }} {{ $plugin.revision | quote }}
+{{- end }}
+install_plugin {{ $themePlugin.name | quote }} {{ $themePlugin.url | quote }} {{ $themePlugin.revision | quote }}
+
+if [[ ! -x "$tpm_dir/tpm" ]]; then
+  printf 'The pinned TPM checkout is missing its executable: %s\n' "$tpm_dir/tpm" >&2
+  exit 1
+fi
+{{- end -}}

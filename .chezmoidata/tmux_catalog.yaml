@@ -1,0 +1,16 @@
+tmux_catalog:
+  corePlugins:
+    - name: tmux-plugins/tpm
+      url: https://github.com/tmux-plugins/tpm
+      revision: e261deb1b47614eed3400089ce7197dc68acc4eb
+    - name: omerxx/tmux-floax
+      url: https://github.com/omerxx/tmux-floax
+      revision: 133f526793d90d2caa323c47687dd5544a2c704b
+    - name: omerxx/tmux-sessionx
+      url: https://github.com/omerxx/tmux-sessionx
+      revision: c9aaa1d309791871b5e8c1f9bfb91ecc5fa7da3a
+  themePlugins:
+    gruvbox:
+      name: adibhanna/gruvbox-tmux
+      url: https://github.com/adibhanna/gruvbox-tmux
+      revision: c42019297da580017c0acc07a53b16de1660e3f6

@@ -1,5 +1,17 @@
-{{- $manager := .packages.manager | default "none" -}}
-{{- $selectedGroups := .packages.groups | default (list "base" "nvim") -}}
+{{- $packages := index . "packages" | default dict -}}
+{{- $machine := index . "machine" | default dict -}}
+{{- $features := index . "features" | default dict -}}
+{{- $manager := index $packages "manager" | default "none" -}}
+{{- $selectedGroups := index $packages "groups" | default (list "base" "nvim") -}}
+{{- $desktopProfile := index $machine "desktopProfile" | default "none" -}}
+{{- $hyprlandEnabled := index $features "hyprland" | default false -}}
+{{- $noctaliaEnabled := index $features "noctalia" | default false -}}
+{{- $hasArchHyprlandGroup := has "arch-hyprland" $selectedGroups -}}
+{{- $hasCachyOSNoctaliaGroup := has "cachyos-noctalia" $selectedGroups -}}
+{{- $isCachyOS := false -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{- $isCachyOS = eq (.chezmoi.osRelease.id | default "") "cachyos" -}}
+{{- end -}}
 {{- if eq $manager "brew" -}}
 #!/usr/bin/env bash
 set -euo pipefail
@@ -28,7 +40,12 @@ BREWFILE
 set -euo pipefail
 
 if ! command -v apt-get >/dev/null 2>&1; then
-  printf 'apt-get is not available on this machine.\n' >&2
+  printf 'Package manager is set to apt, but apt-get is unavailable. Update [data.packages].manager.\n' >&2
+  exit 1
+fi
+
+if [[ -e /etc/arch-release ]]; then
+  printf 'Package manager is set to apt on an Arch-based system. Update [data.packages].manager to pacman.\n' >&2
   exit 1
 fi
 
@@ -51,33 +68,70 @@ for package in "${raw_packages[@]}"; do
   packages+=("$package")
 done
 
-available=()
-missing=()
-sudo apt-get update
+pending=()
 for package in "${packages[@]}"; do
   if dpkg -s "$package" >/dev/null 2>&1; then
     continue
   fi
-  if apt-cache show "$package" >/dev/null 2>&1; then
-    available+=("$package")
-  else
-    missing+=("$package")
-  fi
+  pending+=("$package")
 done
 
-if ((${#available[@]} > 0)); then
-  sudo apt-get install -y "${available[@]}"
-fi
+if ((${#pending[@]} > 0)); then
+  available=()
+  missing=()
+  sudo apt-get update
+  for package in "${pending[@]}"; do
+    if apt-cache show "$package" >/dev/null 2>&1; then
+      available+=("$package")
+    else
+      missing+=("$package")
+    fi
+  done
 
-if ((${#missing[@]} > 0)); then
-  printf 'Skipped unavailable apt packages: %s\n' "${missing[*]}" >&2
+  if ((${#available[@]} > 0)); then
+    sudo apt-get install -y "${available[@]}"
+  fi
+
+  if ((${#missing[@]} > 0)); then
+    printf 'Skipped unavailable apt packages: %s\n' "${missing[*]}" >&2
+  fi
 fi
 {{- else if eq $manager "pacman" -}}
 #!/usr/bin/env bash
 set -euo pipefail
 
+{{- if ne (eq $desktopProfile "hyprland") $hyprlandEnabled }}
+printf 'The Hyprland desktop profile and [data.features].hyprland must either both be enabled or both be disabled. Migrate the local chezmoi config before retrying.\n' >&2
+exit 1
+{{- end }}
+{{- if ne $hyprlandEnabled $hasArchHyprlandGroup }}
+printf '[data.features].hyprland and the arch-hyprland package group must either both be enabled or both be disabled. Migrate the local chezmoi config before retrying.\n' >&2
+exit 1
+{{- end }}
+{{- if and $noctaliaEnabled (not $hyprlandEnabled) }}
+printf 'Noctalia requires the Hyprland desktop profile. Migrate the local chezmoi config before retrying.\n' >&2
+exit 1
+{{- end }}
+{{- if ne $hyprlandEnabled $noctaliaEnabled }}
+printf '[data.features].hyprland and [data.features].noctalia must either both be enabled or both be disabled. Migrate the local chezmoi config before retrying.\n' >&2
+exit 1
+{{- end }}
+{{- if and (or $noctaliaEnabled $hasCachyOSNoctaliaGroup) (not $isCachyOS) }}
+printf 'The cachyos-noctalia profile is supported only on CachyOS. Disable it on this machine before retrying.\n' >&2
+exit 1
+{{- end }}
+{{- if ne $noctaliaEnabled $hasCachyOSNoctaliaGroup }}
+printf '[data.features].noctalia and the cachyos-noctalia package group must either both be enabled or both be disabled. Migrate the local chezmoi config before retrying.\n' >&2
+exit 1
+{{- end }}
+
 if ! command -v pacman >/dev/null 2>&1; then
-  printf 'pacman is not available on this machine.\n' >&2
+  printf 'Package manager is set to pacman, but pacman is unavailable. Update [data.packages].manager.\n' >&2
+  exit 1
+fi
+
+if [[ ! -e /etc/arch-release ]] && command -v apt-get >/dev/null 2>&1; then
+  printf 'Package manager is set to pacman on an apt-based system. Update [data.packages].manager to apt.\n' >&2
   exit 1
 fi
 
@@ -100,25 +154,66 @@ for package in "${raw_packages[@]}"; do
   packages+=("$package")
 done
 
-available=()
-missing=()
-sudo pacman -Sy --noconfirm
+pending=()
 for package in "${packages[@]}"; do
   if pacman -Q "$package" >/dev/null 2>&1; then
     continue
   fi
-  if pacman -Si "$package" >/dev/null 2>&1; then
-    available+=("$package")
-  else
-    missing+=("$package")
-  fi
+  pending+=("$package")
 done
 
-if ((${#available[@]} > 0)); then
-  sudo pacman -S --needed --noconfirm "${available[@]}"
-fi
+if ((${#pending[@]} > 0)); then
+  if ! command -v checkupdates >/dev/null 2>&1 || ! command -v fakeroot >/dev/null 2>&1; then
+    printf 'Fresh Arch-based systems require a manual safe bootstrap before package provisioning. Run sudo pacman -Syu --needed pacman-contrib fakeroot and retry.\n' >&2
+    exit 1
+  fi
 
-if ((${#missing[@]} > 0)); then
-  printf 'Skipped unavailable pacman packages: %s\n' "${missing[*]}" >&2
+  check_db=$(mktemp -d)
+  trap 'rm -rf "$check_db"' EXIT
+  set +e
+  CHECKUPDATES_DB="$check_db" checkupdates >/dev/null
+  check_status=$?
+  set -e
+
+  if ((check_status == 0)); then
+    printf 'System upgrades are pending. Run sudo pacman -Syu before installing declared packages.\n' >&2
+    exit 1
+  fi
+  if ((check_status != 2)); then
+    printf 'Unable to perform a fresh Pacman upgrade check. Run sudo pacman -Syu and retry.\n' >&2
+    exit 1
+  fi
+
+  live_db_path=$(pacman-conf DBPath)
+  shopt -s nullglob
+  fresh_sync_dbs=("$check_db"/sync/*.db)
+  shopt -u nullglob
+  if [[ -z "$live_db_path" || ! -d "$live_db_path/sync" || ${#fresh_sync_dbs[@]} -eq 0 ]]; then
+    printf 'Pacman sync databases are unavailable. Run sudo pacman -Syu and retry.\n' >&2
+    exit 1
+  fi
+  for fresh_db in "${fresh_sync_dbs[@]}"; do
+    if ! cmp -s "$fresh_db" "$live_db_path/sync/${fresh_db##*/}"; then
+      printf 'Pacman sync databases are stale. Run sudo pacman -Syu and retry.\n' >&2
+      exit 1
+    fi
+  done
+
+  missing=()
+  for package in "${pending[@]}"; do
+    if pacman -Si "$package" >/dev/null 2>&1; then
+      continue
+    else
+      missing+=("$package")
+    fi
+  done
+
+  if ((${#missing[@]} > 0)); then
+    printf 'Required Pacman packages are unavailable: %s\n' "${missing[*]}" >&2
+    printf 'Run sudo pacman -Syu and retry; if they remain unavailable, correct the selected package groups.\n' >&2
+    exit 1
+  fi
+
+  sudo pacman -S --needed --noconfirm "${pending[@]}"
 fi
-{{- end }}
+{{- end -}}

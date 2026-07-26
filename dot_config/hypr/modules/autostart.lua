@@ -1,1 +1,0 @@
--- Keep startup intentionally small; shell-specific services are added in separate branches.

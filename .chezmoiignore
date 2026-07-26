@@ -1,16 +1,42 @@
 # Source-only files.
 README.md
 .gitignore
+tests
 
-{{- if ne .machine.role "desktop" }}
+{{- $machine := index . "machine" | default dict -}}
+{{- $packages := index . "packages" | default dict -}}
+{{- $groups := index $packages "groups" | default list -}}
+{{- $features := index . "features" | default dict -}}
+{{- $isDesktop := eq (index $machine "role" | default "server") "desktop" -}}
+{{- $isLinuxDesktop := and $isDesktop (eq .chezmoi.os "linux") -}}
+{{- $isCachyOS := false -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{- $isCachyOS = eq (.chezmoi.osRelease.id | default "") "cachyos" -}}
+{{- end -}}
+{{- $desktopProfile := index $machine "desktopProfile" | default "none" -}}
+{{- $hyprlandEnabled := index $features "hyprland" | default false -}}
+{{- $noctaliaEnabled := index $features "noctalia" | default false -}}
+{{- $noctalia := and $isCachyOS $hyprlandEnabled $noctaliaEnabled (eq $desktopProfile "hyprland") (has "arch-hyprland" $groups) (has "cachyos-noctalia" $groups) -}}
+{{- $hyprland := $noctalia -}}
+{{- $spicetify := index $features "spicetify" | default false -}}
+
+{{- if not $isDesktop }}
 .config/ghostty
 {{- end }}
 
-{{- if or (ne .chezmoi.os "darwin") (ne .machine.role "desktop") }}
+{{- if or (ne .chezmoi.os "darwin") (not $isDesktop) }}
 .aerospace.toml
 .config/sketchybar
 {{- end }}
 
-{{- if or (ne .chezmoi.os "linux") (ne .machine.role "desktop") }}
+{{- if or (not $isLinuxDesktop) (not $hyprland) }}
 .config/hypr
+{{- end }}
+
+{{- if or (not $isLinuxDesktop) (not $noctalia) }}
+.config/noctalia
+{{- end }}
+
+{{- if or (not $isLinuxDesktop) (not $spicetify) }}
+.config/spicetify
 {{- end }}
