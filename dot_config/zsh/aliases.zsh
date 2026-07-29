@@ -10,8 +10,9 @@ alias zet="zettelkasten"
 
 alias gl="git log"
 alias gs="git status"
+alias ga="git add"
+alias gc="git commit"
 alias lg="lazygit"
 
 alias op="opencode --port"
-alias oc="opencode"
 alias vi="nvim"
