@@ -1,5 +1,5 @@
 # Dynamic theme colors
-theme = Arthur
+theme = dark:Chalk, light:Monokai Pro Light Sun
 cursor-text = #000000
 
 background-opacity = 0.99
