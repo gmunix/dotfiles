@@ -1,0 +1,23 @@
+#!/usr/bin/env lua
+
+local config_dir = os.getenv("CONFIG_DIR")
+local home = os.getenv("HOME")
+
+if not config_dir or not home then
+  error("SketchyBar must provide CONFIG_DIR and HOME")
+end
+
+package.path = table.concat({
+  config_dir .. "/?.lua",
+  config_dir .. "/?/init.lua",
+  package.path,
+}, ";")
+package.cpath = home .. "/.local/share/sketchybar_lua/?.so;" .. package.cpath
+
+local sbar = require("sketchybar")
+
+sbar.begin_config()
+require("init")(sbar)
+sbar.hotload(true)
+sbar.end_config()
+sbar.event_loop()

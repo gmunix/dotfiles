@@ -1,0 +1,29 @@
+{{- if and (eq .chezmoi.os "darwin") (eq .machine.role "desktop") -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly revision="dba9cc421b868c918d5c23c408544a28aadf2f2f"
+readonly install_dir="$HOME/.local/share/sketchybar_lua"
+readonly revision_file="$install_dir/.revision"
+
+if [[ -f "$install_dir/sketchybar.so" ]] \
+  && [[ -f "$revision_file" ]] \
+  && [[ "$(<"$revision_file")" == "$revision" ]]; then
+  exit 0
+fi
+
+for command in git make clang; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    printf 'SbarLua installation requires %s.\n' "$command" >&2
+    exit 1
+  fi
+done
+
+work_dir="$(mktemp -d "${TMPDIR:-/tmp}/sbarlua.XXXXXX")"
+trap 'rm -rf "$work_dir"' EXIT
+
+git clone --quiet https://github.com/FelixKratz/SbarLua.git "$work_dir"
+git -C "$work_dir" checkout --quiet "$revision"
+make -C "$work_dir" install
+printf '%s\n' "$revision" > "$revision_file"
+{{- end }}
