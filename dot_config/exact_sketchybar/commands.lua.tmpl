@@ -1,0 +1,4 @@
+{{- $aerospaceBin := .paths.aerospaceBin | default "/opt/homebrew/bin/aerospace" -}}
+return {
+  aerospace = {{ $aerospaceBin | quote }},
+}
