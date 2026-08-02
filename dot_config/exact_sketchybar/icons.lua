@@ -1,4 +1,8 @@
 local icons = {
+	media = {
+		paused = "󰏤",
+		playing = "󰐊",
+	},
 	app = {
 		default = "󰣆",
 		ChatGPT = "󰭹",

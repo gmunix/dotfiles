@@ -93,6 +93,7 @@ package_catalog:
           - nikitabobko/tap
         brews:
           - lua
+          - nowplaying-cli
           - sketchybar
         casks:
           - aerospace

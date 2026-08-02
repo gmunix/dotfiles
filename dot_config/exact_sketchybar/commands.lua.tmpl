@@ -1,4 +1,6 @@
 {{- $aerospaceBin := .paths.aerospaceBin | default "/opt/homebrew/bin/aerospace" -}}
+{{- $homebrewPrefix := .paths.homebrewPrefix | default "/opt/homebrew" -}}
 return {
   aerospace = {{ $aerospaceBin | quote }},
+  nowplaying = {{ printf "%s/bin/nowplaying-cli" $homebrewPrefix | quote }},
 }
