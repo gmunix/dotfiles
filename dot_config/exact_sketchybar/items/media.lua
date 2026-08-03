@@ -25,6 +25,7 @@ return function(sbar)
     drawing = false,
     update_freq = 1,
     scroll_texts = false,
+    padding_right = 1,
     icon = {
       string = icons.media.paused,
       color = colors.gray,

@@ -3,6 +3,24 @@ local icons = {
 		cpu = "",
 		ram = "",
 	},
+	network = {
+		connected = "󰖩",
+		disconnected = "󰖪",
+	},
+	volume = {
+		high = "󰕾",
+		medium = "󰖀",
+		low = "󰕿",
+		muted = "󰖁",
+	},
+	battery = {
+		full = "",
+		high = "",
+		medium = "",
+		low = "",
+		empty = "",
+		charging = "",
+	},
 	media = {
 		paused = "󰏤",
 		playing = "󰐊",
