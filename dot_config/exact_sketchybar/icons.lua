@@ -1,4 +1,8 @@
 local icons = {
+	system = {
+		cpu = "",
+		ram = "",
+	},
 	media = {
 		paused = "󰏤",
 		playing = "󰐊",
