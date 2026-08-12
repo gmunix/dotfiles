@@ -16,6 +16,7 @@ return function(sbar)
   local current_label = ""
   local routine_ticks = 0
   local scroll_armed = false
+  local current_playing = false
   local source_app
   local source_bundle
 
@@ -44,6 +45,7 @@ return function(sbar)
     current_label = ""
     routine_ticks = 0
     scroll_armed = false
+    current_playing = false
     media:set({ drawing = false, scroll_texts = false })
   end
 
@@ -68,6 +70,7 @@ return function(sbar)
 
     local playing = info.state == "playing"
       or tonumber(info.playbackRate or 0) > 0
+    current_playing = playing
 
     if info.app then
       source_app = info.app
@@ -133,6 +136,14 @@ return function(sbar)
   end)
 
   media:subscribe("system_woke", refresh)
+
+  media:subscribe("theme_colors_updated", function()
+    media:set({
+      icon = { color = current_playing and colors.aqua or colors.gray },
+      label = { color = colors.fg },
+      background = styles.panel(),
+    })
+  end)
 
   media:subscribe("mouse.clicked", function(env)
     if env.BUTTON == "left" then

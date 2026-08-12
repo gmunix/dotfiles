@@ -54,6 +54,11 @@ return function(sbar)
   local volume_generation = 0
   local battery_generation = 0
   local current_volume = 0
+  local network_connected
+  local volume_muted = true
+  local volume_ready = false
+  local battery_percentage
+  local battery_charging = false
 
   local battery = sbar.add("item", "control.battery", status_options(icons.battery.empty, 120))
   local volume = sbar.add("item", "control.volume", status_options(icons.volume.muted, 0))
@@ -72,7 +77,7 @@ return function(sbar)
     label = { drawing = false },
   })
 
-  sbar.add("bracket", "system.controls", {
+  local panel = sbar.add("bracket", "system.controls", {
     network.name,
     volume.name,
     battery.name,
@@ -91,6 +96,19 @@ return function(sbar)
     label = { drawing = false },
   })
 
+  local function render_network()
+    if network_connected == nil then
+      return
+    end
+
+    network:set({
+      icon = {
+        string = network_connected and icons.network.connected or icons.network.disconnected,
+        color = network_connected and colors.aqua or colors.red,
+      },
+    })
+  end
+
   local function refresh_network()
     network_generation = network_generation + 1
     local generation = network_generation
@@ -100,14 +118,32 @@ return function(sbar)
         return
       end
 
-      local connected = result == "connected"
-      network:set({
-        icon = {
-          string = connected and icons.network.connected or icons.network.disconnected,
-          color = connected and colors.aqua or colors.red,
-        },
-      })
+      network_connected = result == "connected"
+      render_network()
     end)
+  end
+
+  local function render_volume()
+    if not volume_ready then
+      return
+    end
+
+    local icon = icons.volume.low
+    if volume_muted or current_volume == 0 then
+      icon = icons.volume.muted
+    elseif current_volume >= 60 then
+      icon = icons.volume.high
+    elseif current_volume >= 30 then
+      icon = icons.volume.medium
+    end
+
+    volume:set({
+      icon = {
+        string = icon,
+        color = (volume_muted or current_volume == 0) and colors.gray or colors.aqua,
+      },
+      label = { string = current_volume .. "%" },
+    })
   end
 
   local function refresh_volume()
@@ -126,25 +162,41 @@ return function(sbar)
       end
 
       current_volume = math.max(0, math.min(100, level))
-      muted = muted == "true"
-
-      local icon = icons.volume.low
-      if muted or current_volume == 0 then
-        icon = icons.volume.muted
-      elseif current_volume >= 60 then
-        icon = icons.volume.high
-      elseif current_volume >= 30 then
-        icon = icons.volume.medium
-      end
-
-      volume:set({
-        icon = {
-          string = icon,
-          color = (muted or current_volume == 0) and colors.gray or colors.aqua,
-        },
-        label = { string = current_volume .. "%" },
-      })
+      volume_muted = muted == "true"
+      volume_ready = true
+      render_volume()
     end)
+  end
+
+  local function render_battery()
+    if not battery_percentage then
+      return
+    end
+
+    local icon = icons.battery.empty
+    local color = colors.red
+
+    if battery_charging then
+      icon = icons.battery.charging
+      color = colors.aqua
+    elseif battery_percentage >= 90 then
+      icon = icons.battery.full
+      color = colors.green
+    elseif battery_percentage >= 60 then
+      icon = icons.battery.high
+      color = colors.green
+    elseif battery_percentage >= 40 then
+      icon = icons.battery.medium
+      color = colors.yellow
+    elseif battery_percentage >= 20 then
+      icon = icons.battery.low
+      color = colors.yellow
+    end
+
+    battery:set({
+      icon = { string = icon, color = color },
+      label = { string = battery_percentage .. "%" },
+    })
   end
 
   local function refresh_battery()
@@ -156,43 +208,29 @@ return function(sbar)
         return
       end
 
-      local percentage = tonumber(result:match("(%d+)%%"))
-      if not percentage then
+      battery_percentage = tonumber(result:match("(%d+)%%"))
+      if not battery_percentage then
         return
       end
 
-      local charging = result:find("; charging;", 1, true) ~= nil
+      battery_charging = result:find("; charging;", 1, true) ~= nil
         or result:find("; finishing charge;", 1, true) ~= nil
-      local icon = icons.battery.empty
-      local color = colors.red
-
-      if charging then
-        icon = icons.battery.charging
-        color = colors.aqua
-      elseif percentage >= 90 then
-        icon = icons.battery.full
-        color = colors.green
-      elseif percentage >= 60 then
-        icon = icons.battery.high
-        color = colors.green
-      elseif percentage >= 40 then
-        icon = icons.battery.medium
-        color = colors.yellow
-      elseif percentage >= 20 then
-        icon = icons.battery.low
-        color = colors.yellow
-      end
-
-      battery:set({
-        icon = { string = icon, color = color },
-        label = { string = percentage .. "%" },
-      })
+      render_battery()
     end)
   end
 
   network:subscribe({ "wifi_change", "routine", "system_woke" }, refresh_network)
   volume:subscribe({ "volume_change", "system_woke" }, refresh_volume)
   battery:subscribe({ "power_source_change", "routine", "system_woke" }, refresh_battery)
+
+  battery:subscribe("theme_colors_updated", function()
+    panel:set({ background = styles.panel() })
+    battery:set({ label = { color = colors.fg } })
+    volume:set({ label = { color = colors.fg } })
+    render_network()
+    render_volume()
+    render_battery()
+  end)
 
   network:subscribe("mouse.clicked", function()
     sbar.exec("/usr/bin/open 'x-apple.systempreferences:com.apple.wifi-settings-extension'")

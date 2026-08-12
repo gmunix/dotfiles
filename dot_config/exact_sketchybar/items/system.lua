@@ -70,13 +70,15 @@ end
 return function(sbar)
   local cpu_failures = 0
   local cpu_generation = 0
+  local cpu_value
   local ram_failures = 0
   local ram_generation = 0
+  local ram_value
 
   local ram = sbar.add("item", "system.ram", item_options(icons.system.ram, 15))
   local cpu = sbar.add("item", "system.cpu", item_options(icons.system.cpu, 5))
 
-  sbar.add("bracket", "system.metrics", { cpu.name, ram.name }, {
+  local panel = sbar.add("bracket", "system.metrics", { cpu.name, ram.name }, {
     associated_display = "active",
     background = styles.panel(),
   })
@@ -92,7 +94,7 @@ return function(sbar)
       icon = { color = metric_color(value) },
       label = { string = value .. "%" },
     })
-    return true
+    return value
   end
 
   local function unavailable(item)
@@ -111,11 +113,14 @@ return function(sbar)
         return
       end
 
-      if exit_code == 0 and update(cpu, result) then
+      local value = exit_code == 0 and update(cpu, result)
+      if value then
+        cpu_value = value
         cpu_failures = 0
       else
         cpu_failures = cpu_failures + 1
         if cpu_failures >= 2 then
+          cpu_value = nil
           unavailable(cpu)
         end
       end
@@ -131,11 +136,14 @@ return function(sbar)
         return
       end
 
-      if exit_code == 0 and update(ram, result) then
+      local value = exit_code == 0 and update(ram, result)
+      if value then
+        ram_value = value
         ram_failures = 0
       else
         ram_failures = ram_failures + 1
         if ram_failures >= 2 then
+          ram_value = nil
           unavailable(ram)
         end
       end
@@ -144,6 +152,18 @@ return function(sbar)
 
   cpu:subscribe({ "routine", "system_woke" }, refresh_cpu)
   ram:subscribe({ "routine", "system_woke" }, refresh_ram)
+
+  cpu:subscribe("theme_colors_updated", function()
+    panel:set({ background = styles.panel() })
+    cpu:set({
+      icon = { color = cpu_value and metric_color(cpu_value) or colors.gray },
+      label = { color = colors.fg },
+    })
+    ram:set({
+      icon = { color = ram_value and metric_color(ram_value) or colors.gray },
+      label = { color = colors.fg },
+    })
+  end)
 
   local function open_activity_monitor()
     sbar.exec("/usr/bin/open -a 'Activity Monitor'")

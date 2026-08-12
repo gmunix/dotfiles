@@ -36,6 +36,14 @@ return function(sbar)
     set_app(env.INFO)
   end)
 
+  front_app:subscribe("theme_colors_updated", function()
+    front_app:set({
+      icon = { color = colors.orange },
+      label = { color = colors.fg },
+      background = styles.panel(),
+    })
+  end)
+
   local command = commands.aerospace
     .. " list-windows --focused --json --format '%{app-name}'"
 

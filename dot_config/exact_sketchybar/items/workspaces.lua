@@ -91,7 +91,7 @@ return function(sbar)
 		end)
 	end
 
-	sbar.add("bracket", "workspace.rail", item_names, {
+	local rail = sbar.add("bracket", "workspace.rail", item_names, {
 		background = styles.panel(),
 	})
 
@@ -170,7 +170,14 @@ return function(sbar)
 		"space_windows_change",
 		"system_woke",
 		"routine",
+		"theme_colors_updated",
 	}, function(env)
+		if env.SENDER == "theme_colors_updated" then
+			rail:set({ background = styles.panel() })
+			render_all()
+			return
+		end
+
 		if env.SENDER == "aerospace_workspace_change" and env.FOCUSED_WORKSPACE then
 			for _, workspace in ipairs(workspace_ids) do
 				states[workspace].focused = workspace == env.FOCUSED_WORKSPACE

@@ -50,4 +50,10 @@ local settings = {
   },
 }
 
+function settings.refresh_theme()
+  settings.default.icon.color = colors.green
+  settings.default.label.color = colors.fg
+  return settings.default
+end
+
 return settings

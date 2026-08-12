@@ -116,6 +116,24 @@ return function(sbar)
     update_calendar()
   end)
 
+  clock:subscribe("theme_colors_updated", function()
+    clock:set({
+      icon = { color = colors.fg },
+      label = { color = colors.fg },
+      background = styles.panel(),
+      popup = {
+        background = {
+          color = colors.with_alpha(colors.bg0, 0.96),
+          border_color = colors.bg2,
+        },
+      },
+    })
+
+    for index, row in ipairs(rows) do
+      row:set({ label = { color = index == 2 and colors.gray or colors.fg } })
+    end
+  end)
+
   clock:subscribe("mouse.clicked", function(env)
     if env.BUTTON == "right" then
       sbar.exec("/usr/bin/open -a 'Calendar'")
