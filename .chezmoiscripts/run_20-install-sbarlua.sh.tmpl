@@ -6,15 +6,30 @@ readonly revision="dba9cc421b868c918d5c23c408544a28aadf2f2f"
 readonly install_dir="$HOME/.local/share/sketchybar_lua"
 readonly revision_file="$install_dir/.revision"
 
+if ! command -v lua >/dev/null 2>&1; then
+  printf 'SbarLua requires lua.\n' >&2
+  exit 1
+fi
+
+lua_runtime="$(lua -e 'io.write(_VERSION, jit and ":" .. jit.version or ":PUC Lua")')"
+lua_architecture="$(/usr/bin/file -bL "$(command -v lua)")"
+readonly lua_runtime lua_architecture
+readonly installation_id="$revision:$lua_runtime:$lua_architecture"
+
+module_loads() {
+  lua -e 'package.cpath = os.getenv("HOME") .. "/.local/share/sketchybar_lua/?.so;" .. package.cpath; require("sketchybar")'
+}
+
 if [[ -f "$install_dir/sketchybar.so" ]] \
   && [[ -f "$revision_file" ]] \
-  && [[ "$(<"$revision_file")" == "$revision" ]]; then
+  && [[ "$(<"$revision_file")" == "$installation_id" ]] \
+  && module_loads; then
   exit 0
 fi
 
 for command in git make clang; do
   if ! command -v "$command" >/dev/null 2>&1; then
-    printf 'SbarLua installation requires %s.\n' "$command" >&2
+    printf 'SbarLua installation requires %s to rebuild.\n' "$command" >&2
     exit 1
   fi
 done
@@ -25,5 +40,6 @@ trap 'rm -rf "$work_dir"' EXIT
 git clone --quiet https://github.com/FelixKratz/SbarLua.git "$work_dir"
 git -C "$work_dir" checkout --quiet "$revision"
 make -C "$work_dir" install
-printf '%s\n' "$revision" > "$revision_file"
+module_loads
+printf '%s\n' "$installation_id" > "$revision_file"
 {{- end }}
