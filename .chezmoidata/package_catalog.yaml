@@ -92,6 +92,8 @@ package_catalog:
           - FelixKratz/formulae
           - nikitabobko/tap
         brews:
+          - lua
+          - nowplaying-cli
           - sketchybar
         casks:
           - aerospace
