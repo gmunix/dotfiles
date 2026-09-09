@@ -1,6 +1,6 @@
 # Domain ADR Format
 
-This reference defines the expected document format and summarizes its creation checklist. `SKILL.md` remains authoritative if its qualification, duplicate detection, preview, confirmation, or write rules differ. This adapts Matt Pocock's domain-modeling format; see [NOTICE.md](./NOTICE.md).
+This reference defines the expected document format and summarizes its creation checklist. `SKILL.md` remains authoritative if its qualification, duplicate detection, preview, confirmation, or write rules differ.
 
 The destination is `<resolved-context>/domain/adrs/NNNN-short-slug.md`.
 

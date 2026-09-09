@@ -1,6 +1,6 @@
 # Attribution
 
-The domain-modeling format references are adapted from [Matt Pocock's skills repository](https://github.com/mattpocock/skills).
+The skills in this directory were developed with [Matt Pocock's skills repository](https://github.com/mattpocock/skills) as a reference. Adapted portions are used under its MIT license.
 
 MIT License
 

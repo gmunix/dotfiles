@@ -1,6 +1,6 @@
 # Domain Context Format
 
-This reference defines content only. `SKILL.md` remains authoritative for identity resolution, previews, confirmation, stale-baseline checks, and writes. It adapts Matt Pocock's domain-modeling format; see [NOTICE.md](./NOTICE.md).
+This reference defines content only. `SKILL.md` remains authoritative for identity resolution, previews, confirmation, stale-baseline checks, and writes.
 
 The destination is `<resolved-context>/domain/CONTEXT.md`.
 
