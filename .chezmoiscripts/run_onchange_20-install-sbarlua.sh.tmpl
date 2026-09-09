@@ -1,5 +1,7 @@
 {{- if and (eq .chezmoi.os "darwin") (eq .machine.role "desktop") -}}
+{{- $lua := lookPath "lua" -}}
 #!/usr/bin/env bash
+# Lua executable checksum: {{ if $lua }}{{ output "cksum" $lua | trim }}{{ else }}missing{{ end }}
 set -euo pipefail
 
 readonly revision="dba9cc421b868c918d5c23c408544a28aadf2f2f"
