@@ -18,7 +18,11 @@ Create entries lazily:
 - `context.md`: optional durable project facts and instructions.
 - `tracker.md`: optional tracker location, terminology, and publication instructions.
 - `writing.md`: optional writing style and document conventions.
+- `domain/CONTEXT.md`: optional domain model, glossary, and concrete scenarios.
+- `domain/adrs/`: optional architecture decision records named `NNNN-short-slug.md`.
 - `snapshots/`: optional point-in-time tracker exports; snapshots are never synchronized back automatically.
+
+These domain paths describe the layout only. Do not create `domain/`, `domain/CONTEXT.md`, or `domain/adrs/` eagerly; a domain workflow creates them only when approved content requires them.
 
 Never create a repository file that points to this directory. Clones and worktrees share context by resolving to the same confirmed project ID.
 
@@ -67,9 +71,10 @@ Set `repository` to the normalized logical repository when one was confirmed fro
 
 Ask only for information the environment cannot provide. Offer the optional files independently instead of creating empty placeholders.
 
-- `context.md`: stable domain facts, important commands, and project constraints.
+- `context.md`: stable project facts, important commands, and project constraints.
 - `tracker.md`: tracker URL or project key, vocabulary, and instructions for publishing snapshots.
 - `writing.md`: audience, tone, formatting, and documentation conventions.
+- `domain/CONTEXT.md` and `domain/adrs/`: managed lazily by domain workflows, not by project setup.
 
 Tracker data is one-way: a later workflow may write a dated file under `snapshots/`, but must not treat snapshots as live synchronization or publish changes without approval.
 
