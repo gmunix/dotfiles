@@ -1,6 +1,6 @@
 # Attribution
 
-The skills in this directory were developed with [Matt Pocock's skills repository](https://github.com/mattpocock/skills) as a reference. Adapted portions are used under its MIT license.
+The skills in this directory were developed with [Matt Pocock's skills repository](https://github.com/mattpocock/skills) as a reference. Copied or adapted portions are used under its MIT license.
 
 MIT License
 

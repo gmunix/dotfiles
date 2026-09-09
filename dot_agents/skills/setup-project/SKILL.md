@@ -20,9 +20,11 @@ Create entries lazily:
 - `writing.md`: optional writing style and document conventions.
 - `domain/CONTEXT.md`: optional domain glossary and canonical terminology.
 - `domain/adrs/`: optional architecture decision records named `NNNN-short-slug.md`.
-- `snapshots/`: optional point-in-time tracker exports; snapshots are never synchronized back automatically.
+- `specs/`: optional canonical feature specs, created lazily by spec workflows.
+- `tickets/`: optional canonical ticket sets, created lazily by ticket workflows.
+- `snapshots/`: optional point-in-time tracker publication receipts containing returned links and comparison data; snapshots are never synchronized back automatically.
 
-These domain paths describe the layout only. Do not create `domain/`, `domain/CONTEXT.md`, or `domain/adrs/` eagerly; a domain workflow creates them only when approved content requires them.
+These generated-content paths describe the layout only. Do not create `domain/`, `domain/CONTEXT.md`, `domain/adrs/`, `specs/`, `tickets/`, or `snapshots/` eagerly; the relevant workflow creates them only when approved content requires them.
 
 Never create a repository file that points to this directory. Clones and worktrees share context by resolving to the same confirmed project ID.
 
@@ -75,8 +77,9 @@ Ask only for information the environment cannot provide. Offer the optional file
 - `tracker.md`: tracker URL or project key, vocabulary, and instructions for publishing snapshots.
 - `writing.md`: audience, tone, formatting, and documentation conventions.
 - `domain/CONTEXT.md` and `domain/adrs/`: managed lazily by domain workflows, not by project setup.
+- `specs/` and `tickets/`: canonical outputs managed lazily by spec and ticket workflows, not by project setup.
 
-Tracker data is one-way: a later workflow may write a dated file under `snapshots/`, but must not treat snapshots as live synchronization or publish changes without approval.
+Tracker data is one-way: a later workflow may write a dated publication receipt under `snapshots/`, including returned remote IDs/URLs and comparison data, but must not treat snapshots as live synchronization or publish changes without separate approval.
 
 ## 4. Preview And Confirm
 
