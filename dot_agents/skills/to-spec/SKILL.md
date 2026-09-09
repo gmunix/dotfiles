@@ -76,9 +76,3 @@ Any further notes about the feature, including unresolved product decisions.
 </spec-template>
 
 4. Show the exact destination and the full proposed content, then get explicit confirmation before writing. Write only the canonical external spec; do not write a pointer or mirror in the source repository.
-
-5. Optionally publish the spec to a remote tracker only when `<resolved-context>/tracker.md` configures one, and only after separate explicit approval of the remote payload and operations. The canonical external spec remains authoritative.
-
-Store returned remote IDs/URLs and published payloads in a dated receipt under `<resolved-context>/snapshots/`. Before updating an already linked remote item, fetch it, including comments, compare it with the prior receipt and canonical spec, and surface differences for manual reconciliation. Never silently synchronize.
-
-`ready-for-agent` is internal and must not be published as a remote label, state, or field. Never create tracker labels, states, or custom fields. Do not modify or close a parent issue.
