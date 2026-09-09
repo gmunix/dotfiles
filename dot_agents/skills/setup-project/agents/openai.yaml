@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Project"
+  short_description: "Create confirmed external project context"
+policy:
+  allow_implicit_invocation: false

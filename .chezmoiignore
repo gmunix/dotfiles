@@ -2,6 +2,9 @@
 README.md
 .gitignore
 
+# Runtime-only files.
+.agent-context
+
 {{- /* Existing machines predate AI feature flags, so default them on. */}}
 {{- $features := get . "features" | default dict }}
 {{- $ai := get $features "ai" | default dict }}

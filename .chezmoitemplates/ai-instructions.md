@@ -20,5 +20,6 @@ Help the user understand problems, agree on a bounded scope, and carry approved 
 ## External State
 
 - `~/.agent-context` is runtime project state shared by agent harnesses. Read or write it only when the approved workflow requires it.
+- Use project context only after its identity has been explicitly confirmed. Run the `setup-project` skill when context is missing or ambiguous.
 - Do not add `~/.agent-context`, credentials, sessions, caches, or trust records to chezmoi.
 - Ask before writing anywhere else outside the active workspace unless the user already authorized that location.
