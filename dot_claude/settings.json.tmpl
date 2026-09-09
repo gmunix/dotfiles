@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "opus[1m]",
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Write",
+      "Bash(git add *)",
+      "Bash(git commit)",
+      "Bash(git commit *)"
+    ],
+    "ask": [
+      "Bash(git push)",
+      "Bash(git push *)",
+      "Bash(gh pr create)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr edit)",
+      "Bash(gh pr edit *)",
+      "Bash(gh pr merge)",
+      "Bash(gh pr merge *)",
+      "Bash(gh pr close)",
+      "Bash(gh pr close *)",
+      "Bash(gh pr reopen)",
+      "Bash(gh pr reopen *)",
+      "Bash(gh pr ready)",
+      "Bash(gh pr ready *)",
+      "Bash(gh pr review)",
+      "Bash(gh pr review *)",
+      "Bash(gh pr comment)",
+      "Bash(gh pr comment *)"
+    ],
+    "additionalDirectories": [
+      "{{ .chezmoi.homeDir }}/.agent-context"
+    ]
+  }
+}
