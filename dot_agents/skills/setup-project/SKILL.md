@@ -18,7 +18,7 @@ Create entries lazily:
 - `context.md`: optional durable project facts and instructions.
 - `tracker.md`: optional tracker location, terminology, and publication instructions.
 - `writing.md`: optional writing style and document conventions.
-- `domain/CONTEXT.md`: optional domain model, glossary, and concrete scenarios.
+- `domain/CONTEXT.md`: optional domain glossary and canonical terminology.
 - `domain/adrs/`: optional architecture decision records named `NNNN-short-slug.md`.
 - `snapshots/`: optional point-in-time tracker exports; snapshots are never synchronized back automatically.
 

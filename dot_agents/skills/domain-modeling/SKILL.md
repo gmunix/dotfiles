@@ -22,7 +22,7 @@ If any check fails, stop and direct the user to explicitly invoke `setup-project
 
 ## Read And Model
 
-Read general project facts from `<resolved-context>/context.md` when present. Read domain material lazily from `<resolved-context>/domain/CONTEXT.md` and `<resolved-context>/domain/adrs/`; absence is valid and does not trigger creation.
+Read general project facts from `<resolved-context>/context.md` when present. Read domain material lazily from `<resolved-context>/domain/CONTEXT.md` and `<resolved-context>/domain/adrs/`; absence is valid and does not trigger creation. When proposing glossary content, follow [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
 
 Use repository code and tests as evidence, not as automatic truth. During modeling:
 
@@ -32,7 +32,7 @@ Use repository code and tests as evidence, not as automatic truth. During modeli
 - Surface contradictions between code behavior, existing domain documents, and proposed claims instead of silently choosing one.
 - Separate observed facts, agreed rules, open questions, and implementation details.
 
-An ADR qualifies only when the decision records a meaningful tradeoff, is hard or expensive to reverse, and would be surprising without its history. Do not create ADRs for routine implementation choices. Search existing ADRs by decision, not just title; update a matching record instead of creating a duplicate. For a new ADR, use the next available collision-free four-digit number and a short slug: `<resolved-context>/domain/adrs/NNNN-short-slug.md`.
+An ADR qualifies only when the decision records a meaningful tradeoff, is hard or expensive to reverse, and would be surprising without its history. Do not create ADRs for routine implementation choices. Search existing ADRs by decision, not just title; update a matching record instead of creating a duplicate. For a new ADR, increment the highest existing four-digit number and use a short slug: `<resolved-context>/domain/adrs/NNNN-short-slug.md`. Follow [ADR-FORMAT.md](./ADR-FORMAT.md) for its content.
 
 ## Stage Mutations
 
