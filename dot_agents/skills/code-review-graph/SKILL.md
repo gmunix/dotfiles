@@ -5,6 +5,15 @@ description: Uses graph base search to explore code, understand impact, code rev
 
 # Code Review Graph
 
+## Prerequisites
+
+Before using this skill, run `command -v code-review-graph` and confirm the
+`code-review-graph` MCP tools are available in the current harness. If the
+binary is missing, stop and tell the user to run
+`pip install code-review-graph`. If the MCP tools are missing, stop and tell
+the user to run `code-review-graph install`, configure
+`code-review-graph serve` as an MCP server if needed, and restart the harness.
+
 **IMPORTANT: If the current project doesn't have a knowledge graph but changes will be made always build it with `code-review-graph build`. ALWAYS use the
 code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
 the codebase.** The graph is faster, cheaper (fewer tokens), and gives

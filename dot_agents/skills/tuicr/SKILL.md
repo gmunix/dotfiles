@@ -5,6 +5,16 @@ description: Use tuicr's review CLI to read and add comments in active TUI revie
 
 # tuicr Review Workflow
 
+## Prerequisites
+
+Before using this skill, run `command -v tuicr`. If it is missing, stop and
+tell the user to install it with `brew install tuicr`, `cargo install tuicr`,
+or the instructions at `https://tuicr.dev`. Before starting a new interactive
+pane, also run `test -x <skill-directory>/<selected-wrapper>` and `command -v`
+for its matching multiplexer; for the Herdr wrapper, check `jq` too. If any are
+missing, stop and identify each missing command or wrapper so the user can
+install or configure it.
+
 Use `tuicr review` as the default agent interface. The TUI is where the human
 reviews code; the CLI is how the agent discovers active sessions, reads user
 comments, and, only when appropriate, adds agent-authored comments.

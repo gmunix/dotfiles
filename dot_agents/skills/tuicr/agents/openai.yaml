@@ -1,0 +1,3 @@
+interface:
+  display_name: "tuicr"
+  short_description: "Work with interactive tuicr reviews"

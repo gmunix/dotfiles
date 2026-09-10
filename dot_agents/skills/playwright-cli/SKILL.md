@@ -6,6 +6,16 @@ allowed-tools: Bash(playwright-cli:*) Bash(npx:*) Bash(npm:*)
 
 # Browser Automation with playwright-cli
 
+## Prerequisites
+
+Before using this skill, run `command -v playwright-cli`. If it is unavailable,
+check for a project-local installation with
+`npx --no-install playwright-cli --version`. Use `npx playwright-cli` for every
+command when that check succeeds. If neither command is available, stop and
+tell the user to install Node.js/npm and run
+`npm install -g @playwright/cli@latest` (or add `@playwright/cli` to the
+project).
+
 ## Quick start
 
 ```bash
