@@ -2,6 +2,41 @@
 README.md
 .gitignore
 
+# Runtime-only files.
+.agent-context
+
+{{- /* Existing machines predate AI feature flags, so default them on. */}}
+{{- $features := get . "features" | default dict }}
+{{- $ai := get $features "ai" | default dict }}
+{{- $aiPi := true }}
+{{- $aiOpenCode := true }}
+{{- $aiCodex := true }}
+{{- $aiClaude := true }}
+{{- if hasKey $ai "pi" }}{{ $aiPi = get $ai "pi" }}{{ end }}
+{{- if hasKey $ai "opencode" }}{{ $aiOpenCode = get $ai "opencode" }}{{ end }}
+{{- if hasKey $ai "codex" }}{{ $aiCodex = get $ai "codex" }}{{ end }}
+{{- if hasKey $ai "claude" }}{{ $aiClaude = get $ai "claude" }}{{ end }}
+
+{{- if not (or $aiPi $aiOpenCode $aiCodex $aiClaude) }}
+.agents
+{{- end }}
+
+{{- if not $aiPi }}
+.pi
+{{- end }}
+
+{{- if not $aiOpenCode }}
+.config/opencode
+{{- end }}
+
+{{- if not $aiCodex }}
+.codex
+{{- end }}
+
+{{- if not $aiClaude }}
+.claude
+{{- end }}
+
 {{- if ne .machine.role "desktop" }}
 .config/ghostty
 {{- end }}

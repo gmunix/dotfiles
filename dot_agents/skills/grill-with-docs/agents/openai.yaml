@@ -1,0 +1,5 @@
+interface:
+  display_name: "Grill With Docs"
+  short_description: "Stress-test decisions and stage domain docs"
+policy:
+  allow_implicit_invocation: false

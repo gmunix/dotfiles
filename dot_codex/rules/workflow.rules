@@ -1,0 +1,19 @@
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Pushing commits requires explicit user approval.",
+    match = ["git push", "git push origin main"],
+    not_match = ["git status", "git commit -m change"],
+)
+
+prefix_rule(
+    pattern = [
+        "gh",
+        "pr",
+        ["create", "edit", "merge", "close", "reopen", "ready", "review", "comment"],
+    ],
+    decision = "prompt",
+    justification = "Mutating a pull request requires explicit user approval.",
+    match = ["gh pr create", "gh pr merge 12", "gh pr review 12 --approve"],
+    not_match = ["gh pr view 12", "gh pr list"],
+)

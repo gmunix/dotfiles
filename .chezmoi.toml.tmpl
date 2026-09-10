@@ -1,4 +1,8 @@
 {{- $role := promptChoiceOnce . "role" "Machine role" (list "desktop" "server") "desktop" -}}
+{{- $aiPi := promptBoolOnce . "aiPi" "Configure Pi" true -}}
+{{- $aiOpenCode := promptBoolOnce . "aiOpenCode" "Configure OpenCode" true -}}
+{{- $aiCodex := promptBoolOnce . "aiCodex" "Configure Codex" true -}}
+{{- $aiClaude := promptBoolOnce . "aiClaude" "Configure Claude Code" true -}}
 {{- $homebrewPrefix := "/opt/homebrew" -}}
 {{- if eq .chezmoi.arch "amd64" -}}
 {{- $homebrewPrefix = "/usr/local" -}}
@@ -42,6 +46,12 @@ undoGlow = {{ eq $role "desktop" }}
 milli = {{ eq $role "desktop" }}
 milliSplash = ["shader", "lights", "ididnot"]
 milliLoop = {{ eq $role "desktop" }}
+
+[data.features.ai]
+pi = {{ $aiPi }}
+opencode = {{ $aiOpenCode }}
+codex = {{ $aiCodex }}
+claude = {{ $aiClaude }}
 
 [data.linux]
 hwmonPath = "/sys/class/hwmon/hwmon0/temp1_input"

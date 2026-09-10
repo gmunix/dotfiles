@@ -18,6 +18,11 @@ return {
 		vim.api.nvim_create_autocmd("FileType", {
 			group = vim.api.nvim_create_augroup("treesitter_start", { clear = true }),
 			callback = function(event)
+				if vim.bo[event.buf].filetype:find("chezmoitmpl", 1, true) then
+					vim.treesitter.stop(event.buf)
+					return
+				end
+
 				pcall(vim.treesitter.start, event.buf)
 			end,
 		})
