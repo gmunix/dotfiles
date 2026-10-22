@@ -140,3 +140,20 @@ Edit a managed target:
 ```sh
 chezmoi edit ~/.config/nvim/init.lua
 ```
+
+## Neovim Smoke Test
+
+Check the Neovim config headlessly, once per machine role (desktop and server):
+
+```sh
+nvim -l tests/nvim/smoke.lua            # both roles
+nvim -l tests/nvim/smoke.lua --role server
+```
+
+The config is rendered from this source tree into a scratch directory, so `$HOME` is untouched; installed plugins and Mason packages are reused. It fails on any error or warning while starting and opening the fixture files, on plugins or keymaps that break the expectations in `tests/nvim/expectations.lua`, and on expected language servers that do not attach. It also reports startup time against the baseline.
+
+Optionally check Elixir intelligence against a real Mix project. No project file is written; the language server may still update its usual git-ignored build output:
+
+```sh
+nvim -l tests/nvim/smoke.lua --elixir path/to/mix/project
+```

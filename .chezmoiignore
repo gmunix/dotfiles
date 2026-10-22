@@ -1,6 +1,7 @@
 # Source-only files.
 README.md
 .gitignore
+tests
 
 # Runtime-only files.
 .agent-context
