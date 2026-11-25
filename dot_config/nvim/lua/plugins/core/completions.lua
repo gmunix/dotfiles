@@ -1,11 +1,5 @@
 local profile = require("core.profile")
 
-local function insert_if(sources, condition, source)
-	if condition then
-		table.insert(sources, source)
-	end
-end
-
 return {
 	{
 		"hrsh7th/nvim-cmp",
@@ -23,7 +17,6 @@ return {
 			require("luasnip.loaders.from_vscode").lazy_load()
 
 			local primary_sources = {}
-			insert_if(primary_sources, profile.enabled("windsurf"), { name = "codeium" })
 			vim.list_extend(primary_sources, {
 				{ name = "nvim_lsp" },
 				{ name = "luasnip" },
@@ -53,7 +46,9 @@ return {
 			})
 
 			local sql_sources = {}
-			insert_if(sql_sources, profile.enabled("dadbod"), { name = "vim-dadbod-completion" })
+			if profile.enabled("dadbod") then
+				table.insert(sql_sources, { name = "vim-dadbod-completion" })
+			end
 			vim.list_extend(sql_sources, {
 				{ name = "nvim_lsp" },
 				{ name = "path" },
@@ -72,7 +67,6 @@ return {
 					{ name = "obsidian_tags" },
 				})
 			end
-			insert_if(markdown_sources, profile.enabled("windsurf"), { name = "codeium" })
 			vim.list_extend(markdown_sources, {
 				{ name = "nvim_lsp" },
 				{ name = "luasnip" },

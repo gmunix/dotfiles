@@ -3,13 +3,6 @@ local M = {}
 local defaults = {
 	obsidian = false,
 	dadbod = false,
-	rest = false,
-	neogit = false,
-	windsurf = false,
-	undo_glow = false,
-	milli = false,
-	milli_splash = "fire",
-	milli_loop = true,
 }
 
 local function normalize_env_name(name)
@@ -55,29 +48,6 @@ end
 
 function M.all()
 	return vim.deepcopy(M.optional)
-end
-
-function M.get(name, fallback)
-	local value = M.optional[name]
-	if value == nil then
-		return fallback
-	end
-
-	return value
-end
-
-function M.pick(name, fallback)
-	local value = M.get(name, fallback)
-	if type(value) ~= "table" then
-		return value
-	end
-
-	if #value == 0 then
-		return fallback
-	end
-
-	local index = (vim.uv.hrtime() % #value) + 1
-	return value[index]
 end
 
 return M

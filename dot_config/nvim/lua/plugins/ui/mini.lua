@@ -1,12 +1,3 @@
-local dashboard = require("dotfiles.dashboard")
-local profile = require("core.profile")
-
-local function hide_sections(content)
-	return vim.tbl_filter(function(line)
-		return not (line[1] and line[1].type == "section")
-	end, content)
-end
-
 return {
 	{
 		"echasnovski/mini.nvim",
@@ -35,42 +26,6 @@ return {
 			vim.keymap.set("x", "S", [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
 			vim.keymap.set("n", "yss", "ys_", { remap = true, desc = "Surround line" })
 
-			local starter = require("mini.starter")
-			local header = dashboard.logo
-
-			if profile.enabled("milli") then
-				local ok, milli = pcall(require, "milli")
-				if ok then
-					local milli_opts = {
-						splash = profile.pick("milli_splash", "fire"),
-						loop = profile.get("milli_loop", true),
-					}
-					local data_ok, data = pcall(milli.load, milli_opts)
-					if data_ok and data and data.frames and data.frames[1] then
-						header = table.concat(data.frames[1], "\n")
-						milli.starter(milli_opts)
-					end
-				end
-			end
-
-			starter.setup({
-				header = header,
-				footer = dashboard.footer,
-				items = {
-					{
-						{ name = "Explore", action = "Oil", section = "start" },
-						{ name = "Find file", action = "Telescope find_files", section = "start" },
-						{ name = "Edit config", action = "edit $MYVIMRC", section = "start" },
-						{ name = "Quit", action = "qa", section = "start" },
-					},
-				},
-				content_hooks = {
-					hide_sections,
-					starter.gen_hook.adding_bullet("  "),
-					starter.gen_hook.padding(2, 2),
-					starter.gen_hook.aligning("center", "center"),
-				},
-			})
 		end,
 		keys = {
 			{
