@@ -30,9 +30,6 @@ return {
 		if profile.enabled("dadbod") then
 			table.insert(groups, { "<leader>d", group = "database" })
 		end
-		if profile.enabled("obsidian") then
-			table.insert(groups, { "<leader>z", group = "zettelkasten" })
-		end
 
 		wk.add(groups)
 	end,

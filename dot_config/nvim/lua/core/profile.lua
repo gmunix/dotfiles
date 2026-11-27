@@ -1,7 +1,6 @@
 local M = {}
 
 local defaults = {
-	obsidian = false,
 	dadbod = false,
 }
 

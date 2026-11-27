@@ -95,7 +95,7 @@ Role controls how much of the setup is applied:
 - `desktop` gets shared terminal/editor config plus GUI desktop packages for the current OS, including Ghostty config
 - `server` gets shared terminal/editor config and avoids GUI desktop packages/configs
 
-Neovim's `lua/local/profile.lua` is generated per host from `[data.features.nvim]` in `~/.config/chezmoi/chezmoi.toml`. The desktop profile enables the optional Obsidian and Dadbod integrations; the server profile disables them.
+Neovim's `lua/local/profile.lua` is generated per host from `[data.features.nvim]` in `~/.config/chezmoi/chezmoi.toml`. The desktop profile enables the optional Dadbod integration; the server profile disables it.
 
 ## Packages
 

@@ -58,25 +58,6 @@ return {
 					{ name = "buffer" },
 				}),
 			})
-
-			local markdown_sources = {}
-			if profile.enabled("obsidian") then
-				vim.list_extend(markdown_sources, {
-					{ name = "obsidian" },
-					{ name = "obsidian_new" },
-					{ name = "obsidian_tags" },
-				})
-			end
-			vim.list_extend(markdown_sources, {
-				{ name = "nvim_lsp" },
-				{ name = "luasnip" },
-				{ name = "path" },
-			})
-			cmp.setup.filetype({ "markdown" }, {
-				sources = cmp.config.sources(markdown_sources, {
-					{ name = "buffer" },
-				}),
-			})
 		end,
 	},
 }
